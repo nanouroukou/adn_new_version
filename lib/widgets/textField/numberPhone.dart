@@ -57,11 +57,13 @@ class NumberTextFieldWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IntlPhoneField(
-            languageCode: 'fr',
+            initialCountryCode: 'ML',
+            languageCode: 'FR',
+            searchText: "Rechercher votre pays",
+            invalidNumberMessage: "format invalide",
             controller: controller,
             readOnly: read ?? false,
             showCursor: show,
-
             style: TextStyle(
                 color: textColor ?? Colors.white,
                 fontSize: displayWidth(context) * 0.04,

@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: GlobalTheme.lightTheme,
       initialRoute: Routes.splashRoute,
+      fallbackLocale: const Locale('fr', 'FR'),
       supportedLocales: const [
         Locale('fr'),
       ],

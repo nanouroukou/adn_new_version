@@ -506,7 +506,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   TextFieldWidget(
                     validator: (String? value) {
                       if (value!.isEmpty) {
-                        return '';
+                        return 'Numero de telephone obligatoire';
                       } else {
                         return null;
                       }
@@ -521,7 +521,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   TextFieldWidget(
                     validator: (String? value) {
                       if (value!.isEmpty) {
-                        return '';
+                        return 'prénom(s) du père obligatoire';
                       } else {
                         return null;
                       }
@@ -536,7 +536,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   TextFieldWidget(
                     validator: (String? value) {
                       if (value!.isEmpty) {
-                        return '';
+                        return 'prénom(s) de la mère obligatoire';
                       } else {
                         return null;
                       }
@@ -551,7 +551,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   TextFieldWidget(
                     validator: (String? value) {
                       if (value!.isEmpty) {
-                        return '';
+                        return 'numero de la piece d\'identite obligatoire';
                       } else {
                         return null;
                       }
