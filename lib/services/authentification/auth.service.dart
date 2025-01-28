@@ -32,14 +32,11 @@ class AuthService {
     try {
       final response =
           await http.post(Uri.parse(url), headers: headers, body: body);
-      print("le data ${response}");
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data['status'] == 1) {
           await _secureStorage.write(
               key: 'token', value: data['body']['token']);
-
-          await _secureStorage.write(key: 'id', value: data['body']['id']);
 
           await _secureStorage.write(
               key: 'expirationDate', value: data['body']['expirationDate']);
@@ -52,9 +49,8 @@ class AuthService {
 
           //
           user = User.fromJson(data['body']['user']);
-          print(data['body']);
-          print("le data ${data['body']['user']}");
 
+          await _secureStorage.write(key: 'id', value: user.id.toString());
           await _secureStorage.write(key: 'firstName', value: user.prenom);
           await _secureStorage.write(key: 'lastName', value: user.nom);
 

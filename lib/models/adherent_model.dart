@@ -85,7 +85,7 @@ class Adherent {
       position: json['position'],
       nationality: json['nationality'],
       placeOfBirthday: json['placeOfBirthday'],
-      level: Level.fromJson(json['level6']),
+      level: json['level6'] == null ? null : Level.fromJson(json['level6']),
       codeAdherent: json['codeAdherent'],
       identityType: TypePiece.fromJson(json['identityType']),
       degree: Diplome.fromJson(json['degree']),

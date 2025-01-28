@@ -860,10 +860,11 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         border: Border.all(color: Colors.black, width: 2),
                         borderRadius: BorderRadius.circular(18),
                         color: Colors.white),
-                    child: imageFileIdentity != null
-                        ? Image.file(imageFileIdentity!)
-                        : Image.network(
-                            '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage.value}')
+                    child: imageFileIdentity == null
+                        ? Image.network(
+                            '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage}')
+                        : Image.file(imageFileIdentity!)
+
                     //     const Icon(
                     //   color: Colors.grey,
                     //   Icons.person,
@@ -903,10 +904,10 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         border: Border.all(color: Colors.black, width: 2),
                         borderRadius: BorderRadius.circular(18),
                         color: Colors.white),
-                    child: imageFileProfile != null
-                        ? Image.file(imageFileProfile!)
-                        : Image.network(
-                            '${ApiServices.BASE_URL}/api/adherent/photo/${dropdownController.picture.value}')
+                    child: imageFileProfile == null
+                        ? Image.network(
+                            '${ApiServices.BASE_URL}/api/adherent/photo/${dropdownController.picture}')
+                        : Image.file(imageFileProfile!)
 
                     // const Icon(
                     //   color: Colors.grey,

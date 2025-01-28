@@ -547,6 +547,8 @@ class ApiServices extends GetxController {
     try {
       var body =
           jsonEncode({"registerAgentId": await _secureStorage.read(key: 'id')});
+      print(" l'id de l'agent est =====>${body}");
+
       final response = await http.post(
           Uri.parse('$BASE_URL/api/adherent/search'),
           body: body,
