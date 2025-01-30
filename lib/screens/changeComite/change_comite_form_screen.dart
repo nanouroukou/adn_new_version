@@ -861,8 +861,9 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         borderRadius: BorderRadius.circular(18),
                         color: Colors.white),
                     child: imageFileIdentity == null
-                        ? Image.network(
-                            '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage}')
+                        ? Image.network(imageFileIdentity == null
+                            ? "https://img.freepik.com/vecteurs-premium/illustration-vectorielle-plate-echelle-gris-profil-utilisateur-avatar-image-profil-personne-icone-convient-pour-profils-medias-sociaux-icones-economiseurs-ecran-comme-modelex9xa_719432-1229.jpg?semt=ais_hybrid"
+                            : '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage}')
                         : Image.file(imageFileIdentity!)
 
                     //     const Icon(
@@ -905,8 +906,9 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         borderRadius: BorderRadius.circular(18),
                         color: Colors.white),
                     child: imageFileProfile == null
-                        ? Image.network(
-                            '${ApiServices.BASE_URL}/api/adherent/photo/${dropdownController.picture}')
+                        ? Image.network(imageFileProfile == null
+                            ? '${ApiServices.BASE_URL}/api/adherent/photo/${dropdownController.picture}'
+                            : "https://img.freepik.com/vecteurs-premium/illustration-vectorielle-plate-echelle-gris-profil-utilisateur-avatar-image-profil-personne-icone-convient-pour-profils-medias-sociaux-icones-economiseurs-ecran-comme-modelex9xa_719432-1229.jpg?semt=ais_hybrid")
                         : Image.file(imageFileProfile!)
 
                     // const Icon(
