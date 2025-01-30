@@ -30,12 +30,13 @@ class AuthService {
     String email,
   ) async {
     try {
-      var payloadJson = jsonEncode({
-        "email": email,
-      });
-      final response = await http.post(
-        Uri.parse('$BASE_URL/api/users/forget-password'),
-        body: payloadJson,
+      // var payloadJson = jsonEncode({
+      //   "email": email,
+      // });
+      final response = await http.get(
+        Uri.parse('$BASE_URL/api/users/reset-password/$email'),
+
+        // body: payloadJson,
       );
 
       if (response.statusCode == 200) {
