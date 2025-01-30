@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/screens/login/login.dart';
@@ -24,6 +25,42 @@ class AuthService {
   var user = User();
 
   final userController = Get.find<UserController>();
+
+  Future forgetPassword(
+    String email,
+  ) async {
+    try {
+      var payloadJson = jsonEncode({
+        "email": email,
+      });
+      final response = await http.post(
+        Uri.parse('$BASE_URL/api/users/forget-password'),
+        body: payloadJson,
+      );
+
+      if (response.statusCode == 200) {
+        final bodyJson = jsonDecode(response.body);
+        if (bodyJson['status'] == 1) {
+          Alert.showInfoDialog(bodyJson['message'],
+              backTo: const LoginScreen());
+        } else {
+          Alert.showErrorDialog(bodyJson['message']);
+          logger().e(bodyJson['message']);
+        }
+      } else {
+        Alert.showErrorDialog(
+            'Erreur inattendue !(status ${response.statusCode})');
+        logger().e('Erreur inattendue ![change comity] ! ${response.body}');
+      }
+    } on SocketException catch (e) {
+      Alert.showErrorDialog('Connexion à internet impossible !');
+      logger().e(e.toString());
+    } on Exception catch (e) {
+      Alert.showErrorDialog('Erreur inattendue ![change comity] !');
+      logger().e(e.toString());
+    }
+    return null;
+  }
 
   Future signin(String login, String password) async {
     var url = '$BASE_URL/api/auth';

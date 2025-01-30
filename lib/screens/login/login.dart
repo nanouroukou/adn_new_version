@@ -1,4 +1,5 @@
 import 'package:cherifla/constants/app_texts.dart';
+import 'package:cherifla/screens/login/froget_password.dart';
 import 'package:cherifla/services/authentification/auth.service.dart';
 import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/loading/image.dart';
@@ -147,7 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: 'Mot de  passe',
                             inputFormatters: const [],
                           ),
-                          Gap(Get.height * 0.04),
+                          // Gap(Get.height * 0.04),
+
                           Visibility(
                             visible: visible,
                             child: InkWell(
@@ -179,9 +181,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: Get.height * 0.04,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () =>
+                                      {Get.to(ForgetPawssordScreen())},
+                                  child: Text("Mot de passe oublier"))
+                            ],
                           ),
+                          // SizedBox(
+                          //   height: Get.height * 0.04,
+                          // ),
                           ButtonWidget(
                             title: Texts.signin,
                             colour: loginColor,
