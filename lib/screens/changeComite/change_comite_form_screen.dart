@@ -61,8 +61,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
 
   bool isCompleted = false;
 
-  DateFormat formatter = DateFormat("yyyy-mm-dd");
-
   final List<GlobalKey<FormState>> formKey = [
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
@@ -74,7 +72,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
   int currentStep = 0;
 
   var dateAdhesion = '';
-  var dateNaissanceValue = '';
+  // var dateNaissanceValue = '';
 
   _onContinue() {
     if (formKey[currentStep].currentState!.validate() &&
@@ -138,10 +136,8 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       nom: dropdownController.nomController.value.text,
       prenom: dropdownController.prenomController.value.text,
       phone: dropdownController.phoneNumberController.value.text,
-      dateNaissance: formatter.format(
-          parseFrDate(dropdownController.dateNaissanceController.value.text)),
-      adhesionDate: formatter.format(
-          parseFrDate(dropdownController.dateAdhesionController.value.text)),
+      dateNaissance: dropdownController.dateNaissanceController.value.text,
+      adhesionDate: dropdownController.dateAdhesionController.value.text,
       prenomPere: dropdownController.prenomPereController.value.text,
       prenomMere: dropdownController.prenomMereController.value.text,
       nomMere: dropdownController.nomMereController.value.text,
@@ -520,18 +516,19 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                                 context: context,
                                 firstDate: DateTime(1900),
                                 lastDate: DateTime.now());
+
+                            dropdownController.dateNaissanceController.text =
+                                dropdownController.dateNaissanceController.text;
+
                             if (pickedDate != null) {
                               dropdownController.dateNaissanceController.text =
                                   DateFormat('dd-MM-yyyy').format(pickedDate);
 
                               setState(() {
-                                dateNaissanceValue =
+                                dropdownController
+                                        .dateNaissanceController.text =
                                     DateFormat('yyyy-MM-dd').format(pickedDate);
                               });
-                            } else {
-                              dropdownController.dateNaissanceController.text =
-                                  dropdownController
-                                      .dateNaissanceController.text;
                             }
                           },
                           child: const Icon(
@@ -564,8 +561,9 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                             borderRadius: BorderRadius.circular(15))),
                     onFieldSubmitted: (newValue) async {
                       setState(() {
-                        dateNaissanceValue = DateFormat('yyyy-mm-dd')
-                            .format(parseFrDate(newValue));
+                        dropdownController.dateNaissanceController.text =
+                            DateFormat('yyyy-mm-dd')
+                                .format(parseFrDate(newValue));
                       });
                     },
                     onTap: () {
@@ -791,17 +789,21 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                                   context: context,
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now());
+
+                              dropdownController.dateAdhesionController.text =
+                                  dropdownController
+                                      .dateAdhesionController.text;
+
                               if (pickedDate != null) {
+                                dropdownController.dateAdhesionController.text =
+                                    DateFormat('dd-MM-yyyy').format(pickedDate);
+
                                 setState(() {
                                   dropdownController
                                           .dateAdhesionController.text =
-                                      DateFormat('dd-MM-yyyy')
+                                      DateFormat('yyyy-MM-dd')
                                           .format(pickedDate);
-                                  dateAdhesion = DateFormat('yyyy-MM-dd')
-                                      .format(pickedDate);
                                 });
-
-                                // print('date adhesion $dateAdhesion');
                               }
                             },
                             child: const Icon(Icons.calendar_month)),
