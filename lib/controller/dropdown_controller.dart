@@ -110,6 +110,7 @@ class DropdownController extends GetxController {
     prenomPereController.text = adh.prenomPere!;
     prenomMereController.text = adh.prenomMere!;
     nomMereController.text = adh.nomMere!;
+    dateAdhesionController.text = adh.adhesionDate.toString();
     professionController.text = adh.profession!;
     posteController.text = adh.profession!;
     placeOfBirthdayController.text = adh.placeOfBirthday!;

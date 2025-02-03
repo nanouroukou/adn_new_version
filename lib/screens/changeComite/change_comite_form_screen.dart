@@ -75,8 +75,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
 
   var dateAdhesion = '';
   var dateNaissanceValue = '';
-  var dateAdhesionController = TextEditingController(
-      text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
 
   _onContinue() {
     if (formKey[currentStep].currentState!.validate() &&
@@ -142,8 +140,8 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       phone: dropdownController.phoneNumberController.value.text,
       dateNaissance: formatter.format(
           parseFrDate(dropdownController.dateNaissanceController.value.text)),
-      adhesionDate:
-          formatter.format(parseFrDate(dateAdhesionController.value.text)),
+      adhesionDate: formatter.format(
+          parseFrDate(dropdownController.dateAdhesionController.value.text)),
       prenomPere: dropdownController.prenomPereController.value.text,
       prenomMere: dropdownController.prenomMereController.value.text,
       nomMere: dropdownController.nomMereController.value.text,
@@ -776,13 +774,13 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                       }
                       return null;
                     },
-                    controller: dateAdhesionController,
+                    controller: dropdownController.dateAdhesionController,
                     keyboardType: TextInputType.datetime,
                     inputFormatters: [
                       TestMaskFormatter(mask: 'xx-xx-xxxx', separator: '-')
                     ],
                     onTap: () {
-                      dateAdhesionController.clear();
+                      dropdownController.dateAdhesionController.clear();
                     },
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
@@ -795,7 +793,8 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                                   lastDate: DateTime.now());
                               if (pickedDate != null) {
                                 setState(() {
-                                  dateAdhesionController.text =
+                                  dropdownController
+                                          .dateAdhesionController.text =
                                       DateFormat('dd-MM-yyyy')
                                           .format(pickedDate);
                                   dateAdhesion = DateFormat('yyyy-MM-dd')
