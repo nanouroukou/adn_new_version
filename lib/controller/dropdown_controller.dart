@@ -17,8 +17,12 @@ class DropdownController extends GetxController {
   var typeList = <TypePiece>[].obs;
   var diplomeList = <Diplome>[].obs;
 
-  var picture = "".obs;
-  var identityDocImage = "".obs;
+  var picture =
+      "https://img.freepik.com/vecteurs-premium/illustration-vectorielle-plate-echelle-gris-profil-utilisateur-avatar-image-profil-personne-icone-convient-pour-profils-medias-sociaux-icones-economiseurs-ecran-comme-modelex9xa_719432-1229.jpg?semt=ais_hybrid"
+          .obs;
+  var identityDocImage =
+      "https://img.freepik.com/vecteurs-premium/illustration-vectorielle-plate-echelle-gris-profil-utilisateur-avatar-image-profil-personne-icone-convient-pour-profils-medias-sociaux-icones-economiseurs-ecran-comme-modelex9xa_719432-1229.jpg?semt=ais_hybrid"
+          .obs;
   var sexList = <dynamic>[].obs;
   var phoneNumberController = TextEditingController();
   var nomController = TextEditingController();
