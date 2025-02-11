@@ -142,6 +142,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       prenomMere: dropdownController.prenomMereController.value.text,
       nomMere: dropdownController.nomMereController.value.text,
       sexe: dropdownController.selectedSex.value,
+      indicePays: dropdownController.indicePaysController.value.text,
       nationality: dropdownController.nationalityController.value.text,
       placeOfBirthday: dropdownController.prenomMereController.value.text,
       profession: dropdownController.professionController.value.text,
@@ -609,8 +610,8 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                     },
                     controller: dropdownController.phoneNumberController,
                     obscure: false,
+                    countryCode: dropdownController.codeCountry.value,
                     keyboardType: TextInputType.phone,
-                    onChanged: (value) {},
                     hintText: 'Numéro de telephone',
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -619,6 +620,11 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         separator: ' ',
                       ),
                     ],
+                    onChanged: (String value) {},
+                    onChangeCountry: (value) {
+                      dropdownController.indicePaysController.text = value;
+                      print(value);
+                    },
                   ),
                   TextFieldWidget(
                     validator: (String? value) {

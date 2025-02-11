@@ -59,6 +59,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final diplomeeController = TextEditingController();
 
   final dateNaissanceController = TextEditingController();
+  final indicePaysController = TextEditingController();
   final prenomPereController = TextEditingController();
   final prenomMereController = TextEditingController();
   final nomMereController = TextEditingController();
@@ -133,6 +134,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
     final adh = AdherentCreation(
       nom: nomController.value.text,
+      indicePays: indicePaysController.value.text,
       prenom: prenomController.value.text,
       phone: phoneNumberController.value.text,
       dateNaissance:
@@ -494,6 +496,10 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                     obscure: false,
                     keyboardType: TextInputType.phone,
                     onChanged: (value) {},
+                    onChangeCountry: (value) {
+                      indicePaysController.text = value;
+                      print(value);
+                    },
                     hintText: 'Numéro de telephone',
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,

@@ -388,6 +388,7 @@ class ApiServices extends GetxController {
     try {
       var payloadJson = jsonEncode({
         "nom": adherent.nom,
+        "indicePays": adherent.indicePays,
         "prenom": adherent.prenom,
         "phone": adherent.phone,
         "dateNaissance": formatter.format(parseFrDate(adherent.dateNaissance!)),

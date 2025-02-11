@@ -14,6 +14,7 @@ class DropdownController extends GetxController {
   final apiServices = ApiServices();
   var federationList = <RegionalFederation>[].obs;
   var codeAdherent = "".obs;
+  final codeCountry = "".obs;
   var typeList = <TypePiece>[].obs;
   var diplomeList = <Diplome>[].obs;
 
@@ -33,6 +34,7 @@ class DropdownController extends GetxController {
   var dateNaissanceController = TextEditingController();
   var dateAdhesionController = TextEditingController();
   var prenomPereController = TextEditingController();
+  var indicePaysController = TextEditingController();
   var prenomMereController = TextEditingController();
   var nomMereController = TextEditingController();
   final nationalityController = TextEditingController();
@@ -96,6 +98,8 @@ class DropdownController extends GetxController {
 
   ///Definit les donnees initiales du dropdown. Prend en parametre un objet de type [Adherent].
   void setInitialData(Adherent adh) {
+    print("la valeur est ${adh.indicePays}");
+    codeAdherent.value = adh.codeAdherent!;
     codeAdherent.value = adh.codeAdherent!;
     identityDocImage.value = adh.identityDocImage.toString();
     phoneNumberController.text = adh.phone!;
@@ -106,16 +110,19 @@ class DropdownController extends GetxController {
     selectedType.value = adh.identityType;
     selectedDiplome.value = adh.degree;
     picture.value = adh.picture.toString();
+    indicePaysController.text = adh.indicePays!;
     dateNaissanceController.text = adh.dateNaissance!;
     prenomPereController.text = adh.prenomPere!;
     prenomMereController.text = adh.prenomMere!;
     nomMereController.text = adh.nomMere!;
     dateAdhesionController.text = adh.adhesionDate.toString();
     professionController.text = adh.profession!;
+    codeCountry.value = adh.indicePays!;
     posteController.text = adh.profession!;
     placeOfBirthdayController.text = adh.placeOfBirthday!;
     nationalityController.text = adh.nationality!;
     personToContactController.text = adh.personToContact!;
+    print("la valeur est ${indicePaysController}");
 
     update();
   }

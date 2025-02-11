@@ -1,7 +1,9 @@
 import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/mediaQuery/size.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 class NumberTextFieldWidget extends StatelessWidget {
@@ -10,6 +12,8 @@ class NumberTextFieldWidget extends StatelessWidget {
   final TextInputType keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onChangeCountry;
+  final String? countryCode;
   final String hintText;
   final Color? hintColor;
   final Widget? suffix;
@@ -24,30 +28,36 @@ class NumberTextFieldWidget extends StatelessWidget {
   final bool? read;
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
+  final TextEditingController? codeController;
+
   final Function(String value)? onFieldSubmitted;
 
-  const NumberTextFieldWidget(
-      {super.key,
-      this.validator,
-      required this.obscure,
-      required this.keyboardType,
-      this.textInputAction,
-      required this.onChanged,
-      required this.hintText,
-      this.suffix,
-      this.prefix,
-      this.disable,
-      this.show,
-      this.controller,
-      this.inputFormatters,
-      this.boderWidth,
-      this.borderColor,
-      this.read,
-      this.size,
-      this.fillColor,
-      this.hintColor,
-      this.textColor,
-      this.onFieldSubmitted});
+  NumberTextFieldWidget({
+    super.key,
+    this.validator,
+    required this.obscure,
+    required this.keyboardType,
+    this.textInputAction,
+    required this.onChanged,
+    required this.hintText,
+    this.suffix,
+    this.prefix,
+    this.countryCode,
+    this.disable,
+    this.show,
+    this.controller,
+    this.inputFormatters,
+    this.boderWidth,
+    this.borderColor,
+    this.read,
+    this.size,
+    this.fillColor,
+    this.hintColor,
+    this.textColor,
+    this.onFieldSubmitted,
+    this.onChangeCountry,
+    this.codeController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +67,10 @@ class NumberTextFieldWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IntlPhoneField(
-            initialCountryCode: 'ML',
+            onCountryChanged: (country) {
+              onChangeCountry!(country.dialCode);
+            },
+            initialValue: '+$countryCode',
             languageCode: 'FR',
             searchText: "Rechercher votre pays",
             invalidNumberMessage: "format invalide",

@@ -21,6 +21,7 @@ class AdherentCreation {
   String? position;
   String? prenomMere;
   String? nomMere;
+  String? indicePays;
   String? codeAdherent;
   String? nationality;
   String? placeOfBirthday;
@@ -31,6 +32,7 @@ class AdherentCreation {
   AdherentCreation(
       {this.nom,
       this.prenom,
+      this.indicePays,
       this.phone,
       this.dateNaissance,
       this.adhesionDate,
@@ -53,6 +55,7 @@ class AdherentCreation {
   factory AdherentCreation.fromJson(Map<String, dynamic> json) {
     return AdherentCreation(
       nom: json['nom'],
+      indicePays: json['indicePays'],
       prenom: json['prenom'],
       phone: json['phone'],
       dateNaissance: json['dateNaissance'],
@@ -78,6 +81,7 @@ class AdherentCreation {
   Map<String, dynamic> toJson() {
     return {
       'nom': nom,
+      'indicePays': indicePays,
       'prenom': prenom,
       'phone': phone,
       'placeOfBirthday': placeOfBirthday,

@@ -11,6 +11,7 @@ import 'sub_section_model.dart';
 
 class Adherent {
   String? nom;
+  String? indicePays;
   String? prenom;
   String? phone;
   String? dateNaissance;
@@ -45,6 +46,7 @@ class Adherent {
   Adherent(
       {this.nom,
       this.prenom,
+      this.indicePays,
       this.phone,
       this.dateNaissance,
       this.adhesionDate,
@@ -73,6 +75,7 @@ class Adherent {
   factory Adherent.fromJson(Map<String, dynamic> json) {
     return Adherent(
       nom: json['nom'],
+      indicePays: json['indicePays'],
       prenom: json['prenom'],
       phone: json['phone'],
       dateNaissance: json['dateNaissance'],
@@ -117,6 +120,7 @@ class Adherent {
       'prenomMere': prenomMere,
       'nomMere': nomMere,
       'picture': picture,
+      'indicePays': indicePays,
       'codeAdherent': codeAdherent,
       'level6': level,
       'identityType': identityType,
