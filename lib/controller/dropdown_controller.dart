@@ -98,7 +98,6 @@ class DropdownController extends GetxController {
 
   ///Definit les donnees initiales du dropdown. Prend en parametre un objet de type [Adherent].
   void setInitialData(Adherent adh) {
-    print("la valeur est ${adh.indicePays}");
     codeAdherent.value = adh.codeAdherent!;
     codeAdherent.value = adh.codeAdherent!;
     identityDocImage.value = adh.identityDocImage.toString();
@@ -122,7 +121,6 @@ class DropdownController extends GetxController {
     placeOfBirthdayController.text = adh.placeOfBirthday!;
     nationalityController.text = adh.nationality!;
     personToContactController.text = adh.personToContact!;
-    print("la valeur est ${indicePaysController}");
 
     update();
   }
