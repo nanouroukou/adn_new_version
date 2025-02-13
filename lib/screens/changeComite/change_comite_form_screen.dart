@@ -573,13 +573,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Lieu de Naissance obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.placeOfBirthdayController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -623,17 +616,9 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                     onChanged: (String value) {},
                     onChangeCountry: (value) {
                       dropdownController.indicePaysController.text = value;
-                      print(value);
                     },
                   ),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return '';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.prenomPereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -642,13 +627,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return '';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.prenomMereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -657,13 +635,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return '';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.nomMereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -742,13 +713,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Poste obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.posteController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -757,13 +721,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   ),
                   _buildDipDw(),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Numero de la personne à contacter obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: dropdownController.personToContactController,
                     obscure: false,
                     keyboardType: TextInputType.name,

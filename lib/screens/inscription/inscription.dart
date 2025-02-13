@@ -457,13 +457,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Lieu de Naissance obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: placeOfBirthdayController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -510,13 +503,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                     ],
                   ),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Numero de telephone obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: prenomPereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -540,13 +526,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'prénom(s) de la mère obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: nomMereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -627,13 +606,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Poste obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: posteController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -642,13 +614,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   ),
                   _buildDipDw(),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Numero de la personne à contacter obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: personToContactController,
                     obscure: false,
                     keyboardType: TextInputType.name,
