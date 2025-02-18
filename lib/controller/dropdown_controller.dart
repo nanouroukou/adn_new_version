@@ -101,7 +101,7 @@ class DropdownController extends GetxController {
     codeAdherent.value = adh.codeAdherent!;
     codeAdherent.value = adh.codeAdherent!;
     identityDocImage.value = adh.identityDocImage.toString();
-    phoneNumberController.text = adh.phone!;
+    phoneNumberController.text = adh.phone!.replaceAll(" ", "");
     nomController.text = adh.nom!;
     prenomController.text = adh.prenom!;
     identityCardNumberController.text = adh.identityCardNumber!;
