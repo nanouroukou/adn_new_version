@@ -69,10 +69,10 @@ class ApiServices extends GetxController {
       return headers;
     } else {
       logger().w('Token non trouvé ou invalide ou expirée');
-      Alert.showConfirmDialog(Texts.errorInvalidToken, () async {
-        AuthService().clearAuthStorage();
-        Get.off(() => const LoginScreen());
-      });
+      // Alert.showConfirmDialog(Texts.errorInvalidToken, () async {
+      //   AuthService().clearAuthStorage();
+      //   Get.off(() => const LoginScreen());
+      // });
       return null;
     }
   }
@@ -496,9 +496,9 @@ class ApiServices extends GetxController {
           return null;
         }
       } else {
-        Alert.showErrorDialog(
-            'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
-        logger().e(response.body);
+        // Alert.showErrorDialog(
+        //     'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
+        // logger().e(response.body);
         return null;
       }
     } on SocketException catch (e) {
@@ -524,14 +524,14 @@ class ApiServices extends GetxController {
           logger().d('Historique OK');
           return sexList;
         } else {
-          Alert.showErrorDialog(bodyJson['message']);
-          logger().e(response.body);
+          // Alert.showErrorDialog(bodyJson['message']);
+          // logger().e(response.body);
           return null;
         }
       } else {
-        Alert.showErrorDialog(
-            'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
-        logger().e(response.body);
+        // Alert.showErrorDialog(
+        //     'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
+        // logger().e(response.body);
         return null;
       }
     } on SocketException catch (e) {
@@ -561,8 +561,8 @@ class ApiServices extends GetxController {
           logger().d('Historique OK');
           return events;
         } else {
-          Alert.showErrorDialog(bodyJson['message']);
-          logger().e(response.body);
+          // Alert.showErrorDialog(bodyJson['message']);
+          // logger().e(response.body);
           return null;
         }
       } else {
@@ -600,9 +600,9 @@ class ApiServices extends GetxController {
           return null;
         }
       } else {
-        Alert.showErrorDialog(
-            'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
-        logger().e(response.body);
+        // Alert.showErrorDialog(
+        //     'Erreur inattendue ![fetch adherents piece type] (status ${response.statusCode})');
+        // logger().e(response.body);
         return null;
       }
     } on SocketException catch (e) {
@@ -731,7 +731,6 @@ class ApiServices extends GetxController {
 
   Future updateAdherentWithImage(
       File file, File identityDoc, AdherentCreation body) async {
-    print("les data${file}");
     String? token = await _secureStorage.read(key: 'token');
     String? tokenExpirationDate =
         await _secureStorage.read(key: 'expirationDate');
@@ -884,7 +883,6 @@ class ApiServices extends GetxController {
   }
 
   Future updateAdherentWithoutImage(AdherentCreation body) async {
-    print("la valeur est ============${body.dateNaissance}");
     String? token = await _secureStorage.read(key: 'token');
     String? tokenExpirationDate =
         await _secureStorage.read(key: 'expirationDate');
