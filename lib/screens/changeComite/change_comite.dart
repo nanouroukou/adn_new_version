@@ -24,29 +24,30 @@ class ChangeComiteScreen extends StatefulWidget {
 class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final api = ApiServices();
-   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-   final codeController = TextEditingController();
-   var showLoading = false;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  final codeController = TextEditingController();
+  var showLoading = false;
 
   onContinue() {
     if (_formKey.currentState!.validate()) {
-     // print(codeAdh);
-     setState(() {
-       showLoading = true;
-     });
-     api.getAdherentByCode(codeController.value.text).then((value) {
-      if(value != null){
-        //logger().d('adh trouve'+ value.);
-        //logger().d(value.toJson());
-        setState(() {
+      // print(codeAdh);
+      setState(() {
+        showLoading = true;
+      });
+      api.getAdherentByCode(codeController.value.text).then((value) {
+        if (value != null) {
+          //logger().d('adh trouve'+ value.);
+          //logger().d(value.toJson());
+          setState(() {
+            showLoading = false;
+          });
+          Get.to(() => ChangeComiteTarget(adherent: value));
+        }
+      }).whenComplete(
+        () => setState(() {
           showLoading = false;
-        });
-        Get.to(()=>ChangeComiteTarget(adherent: value));
-      }
-       
-     }).whenComplete(() => setState(() {
-       showLoading = false;
-     }),);
+        }),
+      );
       //Get.to(const ChangeComiteTarget());
     }
   }
@@ -54,13 +55,13 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:buildAppBar(title: 'Modification'),
+        appBar: buildAppBar(title: 'Modification'),
         body: Stack(
           alignment: Alignment.topCenter,
           children: [
             const Background(),
             getBody(),
-           if(showLoading) getLoader()
+            if (showLoading) getLoader()
           ],
         ));
   }
@@ -72,32 +73,34 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-Gap(displayHeight(context) * 0.05),
+              Gap(displayHeight(context) * 0.05),
               SizedBox(
                 width: displayWidth(context) * 06,
                 child: Column(
                   children: [
-                   
                     SizedBox(
                         width: displayWidth(context) * 0.8,
                         child: Form(
                           key: _formKey,
                           child: TextFieldWidget(
-                            controller: codeController,
-                            
-                            suffix:  IconButton(onPressed: () => Get.to(()=>const ScanQrCodeScreen()), icon: const Icon(Icons.qr_code_scanner,color: Colors.white,)),
+                              controller: codeController,
+                              suffix: IconButton(
+                                  onPressed: () =>
+                                      Get.to(() => const ScanQrCodeScreen()),
+                                  icon: const Icon(
+                                    Icons.qr_code_scanner,
+                                    color: Colors.white,
+                                  )),
                               validator: (value) {
                                 if (value!.isEmpty || value.contains(" ")) {
-                                  return "Code d'adhérent incorrect";                              
+                                  return "Code d'adhérent incorrect";
                                 }
                                 return null;
                               },
-                              onChanged: null,                           
+                              onChanged: null,
                               obscure: false,
                               keyboardType: TextInputType.text,
-                             
                               hintText: "Code d'adhérent"),
-                              
                         )),
                     SizedBox(
                       height: displayHeight(context) * 0.05,
@@ -107,10 +110,7 @@ Gap(displayHeight(context) * 0.05),
                         child: ButtonWidget(
                           colour: primaryColor,
                           title: Texts.next,
-                          onPressed: () {
-                            onContinue();
-                          },
-                          
+                          onPressed: () => showLoading ? null : {onContinue()},
                           size: displayWidth(context) * 0.060,
                         ))
                   ],
@@ -123,7 +123,7 @@ Gap(displayHeight(context) * 0.05),
 
   Widget buildHeader() {
     const double titleSizeCoef = 0.06;
-   // const double iconTitleSizeCoef = 0.1;
+    // const double iconTitleSizeCoef = 0.1;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: displayWidth(context) * 0.06),
       child: Column(
@@ -137,7 +137,7 @@ Gap(displayHeight(context) * 0.05),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     fontFamily: 'Avenir Next LTPro',
-                    fontSize: displayWidth(context) *titleSizeCoef,
+                    fontSize: displayWidth(context) * titleSizeCoef,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.none,
                     color: const Color(0xfff707070)),

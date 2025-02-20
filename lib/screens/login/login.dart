@@ -196,24 +196,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           ButtonWidget(
                             title: Texts.signin,
                             colour: loginColor,
-                            onPressed: () => {
-                              if (_loginFormKey.currentState!.validate())
-                                {
-                                  setState(() {
-                                    _showLoading = true;
-                                  }),
-                                  checkFeign(),
-                                  authService
-                                      .signin(loginController.value.text,
-                                          passwordController.value.text)
-                                      .then(
-                                        (value) => setState(() {
-                                          _showLoading = false;
+                            onPressed: () => _showLoading
+                                ? null
+                                : {
+                                    if (_loginFormKey.currentState!.validate())
+                                      {
+                                        setState(() {
+                                          _showLoading = true;
                                         }),
-                                      )
-                                  // Get.to(const HomeScreen())
-                                }
-                            },
+                                        checkFeign(),
+                                        authService
+                                            .signin(loginController.value.text,
+                                                passwordController.value.text)
+                                            .then(
+                                              (value) => setState(() {
+                                                _showLoading = false;
+                                              }),
+                                            )
+                                        // Get.to(const HomeScreen())
+                                      }
+                                  },
                           )
                         ]),
                       ),

@@ -518,10 +518,11 @@ class ApiServices extends GetxController {
           headers: await buildHeaders());
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
+        print("les sexes sont + ${bodyJson['body']}");
+        List sexList = bodyJson['body'];
+
         if (bodyJson['status'] == 1) {
-          print("le dat sont ${bodyJson['status']}");
           List sexList = bodyJson['body'];
-          logger().d('Historique OK');
           return sexList;
         } else {
           // Alert.showErrorDialog(bodyJson['message']);
@@ -548,8 +549,6 @@ class ApiServices extends GetxController {
     try {
       var body =
           jsonEncode({"registerAgentId": await _secureStorage.read(key: 'id')});
-      print(" l'id de l'agent est =====>${body}");
-
       final response = await http.post(
           Uri.parse('$BASE_URL/api/adherent/search'),
           body: body,

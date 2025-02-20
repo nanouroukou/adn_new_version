@@ -112,9 +112,7 @@ class _ChangeComiteScreenState extends State<EvenementScreen> {
                         child: ButtonWidget(
                           colour: primaryColor,
                           title: "Verifier",
-                          onPressed: () {
-                            onContinue();
-                          },
+                          onPressed: () => showLoading ? null : onContinue(),
                           size: displayWidth(context) * 0.060,
                         ))
                   ],

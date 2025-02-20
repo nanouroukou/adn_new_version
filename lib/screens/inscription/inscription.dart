@@ -203,7 +203,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
     api.getSex();
     api.getIdentityType();
     api.getDiplome();
-    // TODO: implement initState
     super.initState();
   }
 
@@ -311,7 +310,9 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                                                 BorderRadius.circular(5.0),
                                           ),
                                         ),
-                                        onPressed: details.onStepContinue,
+                                        onPressed: _showLoading
+                                            ? null
+                                            : details.onStepContinue,
                                         child:
                                             currentStep == getSteps().length - 1
                                                 ? Text(
@@ -934,10 +935,10 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
           builder: (dropdownController) => DropdownButtonFormField<String>(
               value: dropdownController.selectedSex.value,
               disabledHint: const Text(
-                'Sexe non disponible',
+                'Genre non disponible',
                 style: TextStyle(color: Colors.white),
               ),
-              hint: const Text('Selectionnez le sexe',
+              hint: const Text('Selectionnez le genre',
                   style: TextStyle(color: Colors.white)),
               decoration: dropdownDecoration(),
               dropdownColor: primaryColor,

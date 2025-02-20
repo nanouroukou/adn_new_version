@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    apiServices.getSex();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       //Initialisation essentials data
       InitService().preloadEssentialData();

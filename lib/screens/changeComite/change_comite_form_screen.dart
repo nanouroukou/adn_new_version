@@ -268,28 +268,34 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         colour: Colors.white,
                         title: 'Continuer',
                         textColor: Colors.black,
-                        onPressed: () {
-                          // logger().d(dropdownController.selectedFederation.toJson());
-                          if (passwordFieldValue != truePassword) {
-                            Alert.showErrorDialog('Mot passe incorrecte');
-                          } else {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              showLoading = true;
-                            });
-                            update().then(
-                              (value) {
-                                setState(() {
-                                  showLoading = false;
-                                });
+                        onPressed: () => showLoading
+                            ? null
+                            : {
+                                // logger().d(dropdownController.selectedFederation.toJson());
+                                if (passwordFieldValue != truePassword)
+                                  {
+                                    Alert.showErrorDialog(
+                                        'Mot passe incorrecte'),
+                                  }
+                                else
+                                  {
+                                    Navigator.of(context).pop(),
+                                    setState(() {
+                                      showLoading = true;
+                                    }),
+                                    update().then(
+                                      (value) {
+                                        setState(() {
+                                          showLoading = false;
+                                        });
+                                      },
+                                    ).whenComplete(
+                                      () => setState(() {
+                                        showLoading = false;
+                                      }),
+                                    ),
+                                  }
                               },
-                            ).whenComplete(
-                              () => setState(() {
-                                showLoading = false;
-                              }),
-                            );
-                          }
-                        },
                         width: Get.width,
                         size: Get.width * 0.045,
                       )

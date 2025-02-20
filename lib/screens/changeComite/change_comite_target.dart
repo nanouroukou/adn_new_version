@@ -123,7 +123,7 @@ class _ChangeComiteTargetState extends State<ChangeComiteTarget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Changement de comité",
+                "Modification de comité",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
