@@ -33,6 +33,16 @@ import 'package:mime/mime.dart';
 import '../../screens/inscription/valid.dart';
 
 class ApiServices extends GetxController {
+  @override
+  void onInit() {
+    super.onInit();
+    getSex();
+    getHistorique();
+    getDiplome();
+    getIdentityType();
+    getEvenement();
+  }
+
   // Constructeur privé
   ApiServices._internal();
   // Le factory constructeur renvoie toujours la même instance
@@ -44,6 +54,7 @@ class ApiServices extends GetxController {
 
   var idEventController = TextEditingController();
   var idEvent = "".obs;
+  var sexList = <dynamic>[].obs;
 
   DateFormat formatter = DateFormat("yyyy-mm-dd");
   static final ApiServices _instance = ApiServices._internal();
@@ -519,7 +530,7 @@ class ApiServices extends GetxController {
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
         print("les sexes sont + ${bodyJson['body']}");
-        List sexList = bodyJson['body'];
+        sexList.value = bodyJson['body'];
 
         if (bodyJson['status'] == 1) {
           List sexList = bodyJson['body'];

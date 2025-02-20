@@ -49,9 +49,9 @@ class DropdownController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     init();
     initType();
-    super.onInit();
   }
 
   var selectedFederation = Rxn<RegionalFederation>(null);
@@ -85,11 +85,10 @@ class DropdownController extends GetxController {
 
   Future initType() async {
     try {
-      reset();
       apiServices
           .getIdentityType()
           .then((value) => typeList.value = value ?? []);
-
+      apiServices.getDiplome().then((value) => diplomeList.value = value ?? []);
       apiServices.getSex().then((value) => sexList.value = value ?? []);
     } catch (e) {
       logger().e(e.toString());

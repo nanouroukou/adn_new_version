@@ -57,7 +57,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final sexController = TextEditingController();
   final identityTypeController = TextEditingController();
   final diplomeeController = TextEditingController();
-
   final dateNaissanceController = TextEditingController();
   final indicePaysController = TextEditingController();
   final prenomPereController = TextEditingController();
@@ -146,8 +145,8 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       nomMere: nomMereController.value.text,
       sexe: dropdownController.selectedSex.value,
       nationality: nationalityPereController.value.text,
-      placeOfBirthday: prenomMereController.value.text,
-      profession: nomMereController.value.text,
+      placeOfBirthday: placeOfBirthdayController.value.text,
+      profession: professionController.value.text,
       position: posteController.value.text,
       personToContact: personToContactController.text,
       identityType: {'id': dropdownController.selectedType.value?.id},
@@ -200,10 +199,8 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
   @override
   void initState() {
-    api.getSex();
-    api.getIdentityType();
-    api.getDiplome();
     super.initState();
+    dropdownController.init();
   }
 
   // @override
@@ -942,17 +939,15 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   style: TextStyle(color: Colors.white)),
               decoration: dropdownDecoration(),
               dropdownColor: primaryColor,
-              items: dropdownController.sexList.isEmpty
-                  ? []
-                  : dropdownController.sexList.map((v) {
-                      return DropdownMenuItem<String>(
-                          value: v,
-                          key: UniqueKey(),
-                          child: Text(
-                            v ?? '',
-                            style: const TextStyle(color: Colors.white),
-                          ));
-                    }).toList(),
+              items: api.sexList.map((v) {
+                return DropdownMenuItem<String>(
+                    value: v,
+                    key: UniqueKey(),
+                    child: Text(
+                      v ?? '',
+                      style: const TextStyle(color: Colors.white),
+                    ));
+              }).toList(),
               onChanged: (value) {
                 dropdownController.onSelectSex(value!);
               }),
@@ -992,197 +987,4 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
               }),
         ));
   }
-
-  _buildFederationDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) =>
-              DropdownButtonFormField<RegionalFederation>(
-                  value: dropdownController.selectedFederation.value,
-                  disabledHint: const Text(
-                    'Federation non disponible',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  hint: const Text('Selectionnez la Federation',
-                      style: TextStyle(color: Colors.white)),
-                  decoration: dropdownDecoration(),
-                  dropdownColor: primaryColor,
-                  items: dropdownController.federationList.isEmpty
-                      ? []
-                      : dropdownController.federationList.map((v) {
-                          return DropdownMenuItem<RegionalFederation>(
-                              value: v,
-                              key: UniqueKey(),
-                              child: Text(
-                                v.nom ?? '',
-                                style: const TextStyle(color: Colors.white),
-                              ));
-                        }).toList(),
-                  onChanged: (value) {
-                    dropdownController.onSelectFederation(value!);
-                  }),
-        ));
-  }
-
-  _buildSectionDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) => DropdownButtonFormField<Section>(
-              value: dropdownController.selectedSection.value,
-              disabledHint: const Text(
-                ' Section non disponible',
-                style: TextStyle(color: Colors.black),
-              ),
-              hint: const Text('Selectionnez la Section',
-                  style: TextStyle(color: Colors.white)),
-              decoration: dropdownDecoration(),
-              dropdownColor: primaryColor,
-              items: dropdownController
-                          .selectedFederation.value?.sections?.isEmpty ??
-                      true
-                  ? []
-                  : dropdownController.selectedFederation.value?.sections
-                      ?.toSet()
-                      .map((v) {
-                      return DropdownMenuItem<Section>(
-                          value: v,
-                          key: UniqueKey(),
-                          child: Text(
-                            v.nom ?? '',
-                            style: const TextStyle(color: Colors.white),
-                          ));
-                    }).toList(),
-              onChanged: dropdownController
-                          .selectedFederation.value?.sections?.isEmpty ??
-                      true
-                  ? null
-                  : (value) {
-                      dropdownController.onSelectSection(value!);
-                    }),
-        ));
-  }
-
-  _buildSubSectionDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) => DropdownButtonFormField<SubSection>(
-              value: dropdownController.selectedSubSection.value,
-              disabledHint: const Text(
-                'Sous Section non disponible',
-                style: TextStyle(color: Colors.black),
-              ),
-              hint: const Text('Selectionnez la Sous Section',
-                  style: TextStyle(color: Colors.white)),
-              decoration: dropdownDecoration(),
-              dropdownColor: primaryColor,
-              items: dropdownController
-                          .selectedSection.value?.subSections?.isEmpty ??
-                      true
-                  ? []
-                  : dropdownController.selectedSection.value?.subSections
-                      ?.toSet()
-                      .map((v) {
-                      return DropdownMenuItem<SubSection>(
-                          value: v,
-                          key: UniqueKey(),
-                          child: Text(
-                            v.nom ?? '',
-                            style: const TextStyle(color: Colors.white),
-                          ));
-                    }).toList(),
-              onChanged: dropdownController
-                          .selectedSection.value?.subSections?.isEmpty ??
-                      true
-                  ? null
-                  : (value) {
-                      dropdownController.onSelectSubSection(value!);
-                    }),
-        ));
-  }
-
-  Widget _buildComityDw() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-      child: GetBuilder<DropdownController>(
-        builder: (dropdownController) {
-          return DropdownButtonFormField<Comity>(
-            value: dropdownController.selectedComity.value,
-            disabledHint: const Text(
-              'Comité non disponible',
-              style: TextStyle(color: Colors.black),
-            ),
-            hint: const Text('Selectionnez le Comité',
-                style: TextStyle(color: Colors.white)),
-            decoration: dropdownDecoration(),
-            isExpanded: true,
-            dropdownColor: primaryColor,
-            items: dropdownController
-                        .selectedSubSection.value?.comities?.isEmpty ??
-                    true
-                ? []
-                : dropdownController.selectedSubSection.value?.comities
-                    ?.map((v) {
-                    return DropdownMenuItem<Comity>(
-                      key: UniqueKey(),
-                      value: v,
-                      child: Text(
-                        v.nom ?? '',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
-                  }).toList(),
-            onChanged: dropdownController
-                        .selectedSubSection.value?.comities?.isEmpty ??
-                    true
-                ? null
-                : (value) {
-                    dropdownController.onSelectComity(value!);
-                  },
-          );
-        },
-      ),
-    );
-  }
 }
-
-// Widget _buildDropdownT<T>({
-//     required String hintText,
-//     required List<T> items,
-//     T? selectedItem,
-//     required String Function(T) getItemLabel,
-//     required ValueChanged<T?> onChanged,
-//   }) {
-//     final uniqueItems = items.toSet().toList();
-//     return Padding(
-//       padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-//       child: DropdownButtonFormField<T>(
-//         dropdownColor: primaryColor,
-//         validator: (value) {
-//           if (items.isNotEmpty && value == null) {
-//             return 'Selectionnez un element';
-//           } else {
-//             return null;
-//           }
-//         },
-//         decoration: dropdownDecoration(),
-//         isExpanded: true,
-//         hint: Text(hintText, style: const TextStyle(color: Colors.white)),
-//         items: uniqueItems.isEmpty
-//             ? []
-//             : uniqueItems.map<DropdownMenuItem<T>>((T item) {
-//                 return DropdownMenuItem<T>(
-//                   key: UniqueKey(),
-//                   value: item,
-//                   child: Text(
-//                     getItemLabel(item),
-//                     style: const TextStyle(color: Colors.white),
-//                   ),
-//                 );
-//               }).toList(),
-//         onChanged: onChanged,
-//       ),
-//     );
-//   }
