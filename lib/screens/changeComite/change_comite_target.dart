@@ -83,11 +83,11 @@ class _ChangeComiteTargetState extends State<ChangeComiteTarget> {
                     Visibility(
                         visible: !deactivated,
                         child: buildInfoRow("Raison", Colors.red,
-                            widget.adherent.deactivateReason ?? '')),
+                            widget.adherent.deactivateReason ?? 'NULL')),
                     Visibility(
                         visible: !blocked,
                         child: buildInfoRow("Raison", Colors.red,
-                            widget.adherent.suspendReason ?? '')),
+                            widget.adherent.suspendReason ?? 'NULL')),
                     SizedBox(height: displayHeight(context) * 0.05),
                     Visibility(
                       visible: deactivated && blocked,

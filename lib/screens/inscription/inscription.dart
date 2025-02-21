@@ -496,19 +496,19 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                     hintText: 'Numéro de telephone',
                   ),
                   TextFieldWidget(
-                    controller: nomPereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nom du père',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
                     controller: prenomPereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
                     onChanged: (value) {},
                     hintText: 'Prénom(s) du père',
+                  ),
+                  Gap(Get.height * 0.03),
+                  TextFieldWidget(
+                    controller: nomPereController,
+                    obscure: false,
+                    keyboardType: TextInputType.name,
+                    onChanged: (value) {},
+                    hintText: 'Nom du père',
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(

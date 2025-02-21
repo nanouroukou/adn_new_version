@@ -616,19 +616,19 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                     },
                   ),
                   TextFieldWidget(
-                    controller: dropdownController.nomPereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nom du père',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
                     controller: dropdownController.prenomPereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
                     onChanged: (value) {},
                     hintText: 'Prénom(s) du père',
+                  ),
+                  Gap(Get.height * 0.03),
+                  TextFieldWidget(
+                    controller: dropdownController.nomPereController,
+                    obscure: false,
+                    keyboardType: TextInputType.name,
+                    onChanged: (value) {},
+                    hintText: 'Nom du père',
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(

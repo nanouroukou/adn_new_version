@@ -105,31 +105,31 @@ class DropdownController extends GetxController {
 
   ///Definit les donnees initiales du dropdown. Prend en parametre un objet de type [Adherent].
   void setInitialData(Adherent adh) {
-    codeAdherent.value = adh.codeAdherent!;
-    codeAdherent.value = adh.codeAdherent!;
+    codeAdherent.value = adh.codeAdherent ?? "";
+    codeAdherent.value = adh.codeAdherent ?? "";
     identityDocImage.value = adh.identityDocImage.toString();
     phoneNumberController.text = adh.phone!.replaceAll(" ", "");
-    nomController.text = adh.nom!;
-    prenomController.text = adh.prenom!;
-    identityCardNumberController.text = adh.identityCardNumber!;
-    selectedSexUpdate.value = adh.sexe!;
+    nomController.text = adh.nom ?? "";
+    prenomController.text = adh.prenom ?? "";
+    identityCardNumberController.text = adh.identityCardNumber ?? "";
+    selectedSexUpdate.value = adh.sexe ?? "";
     selectedTypeUpdate.value = adh.identityType;
     selectedDiplomeUpdate.value = adh.degree;
     picture.value = adh.picture.toString();
-    indicePaysController.text = adh.indicePays!;
-    dateNaissanceController.text = adh.dateNaissance!;
-    prenomPereController.text = adh.prenomPere!;
-    prenomMereController.text = adh.prenomMere!;
-    nomMereController.text = adh.nomMere!;
-    // nomPereController.text = adh.nomPere!;
+    indicePaysController.text = adh.indicePays ?? "";
+    dateNaissanceController.text = adh.dateNaissance ?? "";
+    prenomPereController.text = adh.prenomPere ?? "";
+    prenomMereController.text = adh.prenomMere ?? "";
+    nomMereController.text = adh.nomMere ?? "";
+    nomPereController.text = adh.nomPere ?? "";
 
     dateAdhesionController.text = adh.adhesionDate.toString();
-    professionController.text = adh.profession!;
-    codeCountry.value = adh.indicePays!;
-    posteController.text = adh.profession!;
-    placeOfBirthdayController.text = adh.placeOfBirthday!;
-    nationalityController.text = adh.nationality!;
-    personToContactController.text = adh.personToContact!;
+    professionController.text = adh.profession ?? "";
+    codeCountry.value = adh.indicePays ?? "";
+    posteController.text = adh.profession ?? "";
+    placeOfBirthdayController.text = adh.placeOfBirthday ?? "";
+    nationalityController.text = adh.nationality ?? "";
+    personToContactController.text = adh.personToContact ?? "";
 
     update();
   }
