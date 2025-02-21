@@ -3,12 +3,10 @@ import 'dart:io';
 import 'package:cherifla/controller/dropdown_controller.dart';
 import 'package:cherifla/models/adherent_creation.dart';
 import 'package:cherifla/models/adherent_model.dart';
-import 'package:cherifla/models/comity_model.dart';
 import 'package:cherifla/models/dipole.dart';
-import 'package:cherifla/models/federation_model.dart';
+
 import 'package:cherifla/models/piece_model.dart';
-import 'package:cherifla/models/section_model.dart';
-import 'package:cherifla/models/sub_section_model.dart';
+
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/services/authentification/auth.service.dart';
 import 'package:cherifla/utils/alert/alert.util.dart';
@@ -26,7 +24,6 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -135,21 +132,22 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       codeAdherent: dropdownController.codeAdherent.value,
       nom: dropdownController.nomController.value.text,
       prenom: dropdownController.prenomController.value.text,
+      nomPere: dropdownController.nomPereController.value.text,
       phone: dropdownController.phoneNumberController.value.text,
       dateNaissance: dropdownController.dateNaissanceController.value.text,
       adhesionDate: dropdownController.dateAdhesionController.value.text,
       prenomPere: dropdownController.prenomPereController.value.text,
       prenomMere: dropdownController.prenomMereController.value.text,
       nomMere: dropdownController.nomMereController.value.text,
-      sexe: dropdownController.selectedSex.value,
+      sexe: dropdownController.selectedSexUpdate.value,
       indicePays: dropdownController.indicePaysController.value.text,
       nationality: dropdownController.nationalityController.value.text,
       placeOfBirthday: dropdownController.prenomMereController.value.text,
       profession: dropdownController.professionController.value.text,
       position: dropdownController.posteController.value.text,
       personToContact: dropdownController.personToContactController.text,
-      identityType: dropdownController.selectedType.value,
-      degree: dropdownController.selectedDiplome.value,
+      identityType: dropdownController.selectedTypeUpdate.value,
+      degree: dropdownController.selectedDiplomeUpdate.value,
       identityCardNumber:
           dropdownController.identityCardNumberController.value.text,
     );
@@ -218,7 +216,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
               backgroundColor: loginBorderColor,
               iconColor: Colors.white,
               title: const Text(
-                "Veuillez saisir votre mot de passe ou continuer avec l'empreinte digitale",
+                "Veuillez saisir votre mot de passe",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white),
               ),
@@ -256,13 +254,13 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                         ),
                       ),
                       Gap(Get.height * 0.03),
-                      InkWell(
-                        onTap: () async {
-                          update();
-                        },
-                        child: Icon(Icons.fingerprint,
-                            color: Colors.white, size: Get.height * 0.1),
-                      ),
+                      // InkWell(
+                      //   onTap: () async {
+                      //     update();
+                      //   },
+                      //   child: Icon(Icons.fingerprint,
+                      //       color: Colors.white, size: Get.height * 0.1),
+                      // ),
                       Gap(displayHeight(context) * 0.01),
                       ButtonWidget(
                         colour: Colors.white,
@@ -612,18 +610,19 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                     countryCode: dropdownController.codeCountry.value,
                     keyboardType: TextInputType.phone,
                     hintText: 'Numéro de telephone',
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      TestMaskFormatter(
-                        mask: 'xx xx xx xx',
-                        separator: ' ',
-                      ),
-                    ],
                     onChanged: (String value) {},
                     onChangeCountry: (value) {
                       dropdownController.indicePaysController.text = value;
                     },
                   ),
+                  TextFieldWidget(
+                    controller: dropdownController.nomPereController,
+                    obscure: false,
+                    keyboardType: TextInputType.name,
+                    onChanged: (value) {},
+                    hintText: 'Nom du père',
+                  ),
+                  Gap(Get.height * 0.03),
                   TextFieldWidget(
                     controller: dropdownController.prenomPereController,
                     obscure: false,
@@ -918,7 +917,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<Diplome>(
-              value: dropdownController.selectedDiplome.value,
+              value: dropdownController.selectedDiplomeUpdate.value,
               disabledHint: const Text(
                 'Dipome non disponible',
                 style: TextStyle(color: Colors.white),
@@ -926,6 +925,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
               hint: const Text('Selectionnez le dipome',
                   style: TextStyle(color: Colors.white)),
               decoration: dropdownDecoration(),
+              isExpanded: true,
               dropdownColor: primaryColor,
               items: dropdownController.diplomeList.isEmpty
                   ? []
@@ -951,7 +951,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<TypePiece>(
-              value: dropdownController.selectedType.value,
+              value: dropdownController.selectedTypeUpdate.value,
               disabledHint: const Text(
                 'Type de piece non disponible',
                 style: TextStyle(color: Colors.white),
@@ -982,7 +982,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<String>(
-              value: dropdownController.selectedSex.value,
+              value: dropdownController.selectedSexUpdate.value,
               disabledHint: const Text(
                 'Sexe non disponible',
                 style: TextStyle(color: Colors.white),

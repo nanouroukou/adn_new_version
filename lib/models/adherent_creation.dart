@@ -21,6 +21,7 @@ class AdherentCreation {
   String? position;
   String? prenomMere;
   String? nomMere;
+  String? nomPere;
   String? indicePays;
   String? codeAdherent;
   String? nationality;
@@ -50,7 +51,8 @@ class AdherentCreation {
       this.identityType,
       required this.sexe,
       this.degree,
-      this.codeAdherent});
+      this.codeAdherent,
+      this.nomPere});
 
   factory AdherentCreation.fromJson(Map<String, dynamic> json) {
     return AdherentCreation(
@@ -63,6 +65,7 @@ class AdherentCreation {
       prenomPere: json['prenomPere'],
       prenomMere: json['prenomMere'],
       nomMere: json['nomMere'],
+      nomPere: json['nomPere'],
       nationality: json['nationality'],
       profession: json['profession'],
       position: json['position'],
@@ -97,6 +100,7 @@ class AdherentCreation {
       'position': position,
       'codeAdherent': codeAdherent,
       'level6': level,
+      'nomPere': nomPere,
       'identityType': identityType,
       'degree': degree,
       'identityCardNumber': identityCardNumber,

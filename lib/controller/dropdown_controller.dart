@@ -34,6 +34,8 @@ class DropdownController extends GetxController {
   var dateNaissanceController = TextEditingController();
   var dateAdhesionController = TextEditingController();
   var prenomPereController = TextEditingController();
+  var nomPereController = TextEditingController();
+
   var indicePaysController = TextEditingController();
   var prenomMereController = TextEditingController();
   var nomMereController = TextEditingController();
@@ -55,10 +57,16 @@ class DropdownController extends GetxController {
   }
 
   var selectedFederation = Rxn<RegionalFederation>(null);
-  var selectedType = Rxn<TypePiece>();
-  var selectedDiplome = Rxn<Diplome>();
+  var selectedTypeUpdate = Rxn<TypePiece>();
+  var selectedTypeRegister = Rxn<TypePiece>();
 
-  var selectedSex = Rxn<String>();
+  var selectedDiplomeUpdate = Rxn<Diplome>();
+
+  var selectedDiplomeRegister = Rxn<Diplome>();
+
+  var selectedSexUpdate = Rxn<String>();
+  var selectedSexRegister = Rxn<String>();
+
   var selectedSection = Rxn<Section>();
   var selectedSubSection = Rxn<SubSection>();
   var selectedComity = Rxn<Comity>();
@@ -104,15 +112,17 @@ class DropdownController extends GetxController {
     nomController.text = adh.nom!;
     prenomController.text = adh.prenom!;
     identityCardNumberController.text = adh.identityCardNumber!;
-    selectedSex.value = adh.sexe!;
-    selectedType.value = adh.identityType;
-    selectedDiplome.value = adh.degree;
+    selectedSexUpdate.value = adh.sexe!;
+    selectedTypeUpdate.value = adh.identityType;
+    selectedDiplomeUpdate.value = adh.degree;
     picture.value = adh.picture.toString();
     indicePaysController.text = adh.indicePays!;
     dateNaissanceController.text = adh.dateNaissance!;
     prenomPereController.text = adh.prenomPere!;
     prenomMereController.text = adh.prenomMere!;
     nomMereController.text = adh.nomMere!;
+    // nomPereController.text = adh.nomPere!;
+
     dateAdhesionController.text = adh.adhesionDate.toString();
     professionController.text = adh.profession!;
     codeCountry.value = adh.indicePays!;
@@ -133,48 +143,43 @@ class DropdownController extends GetxController {
   }
 
   void onSelectType(TypePiece type) async {
-    selectedType.value = type;
+    selectedTypeRegister.value = type;
+    selectedTypeUpdate.value = type;
+
     update();
   }
 
   void onSelectDipolem(Diplome diplome) async {
-    selectedDiplome.value = diplome;
+    selectedDiplomeRegister.value = diplome;
+    selectedDiplomeUpdate.value = diplome;
+
     update();
   }
 
   void onSelectSex(String sex) async {
-    selectedSex.value = sex;
-    update();
-  }
-
-  void onSelectSection(Section section) async {
-    selectedSection.value = section;
-    selectedSubSection.value = null;
-    selectedSubSection.refresh();
-    selectedComity.value = null;
-    update();
-  }
-
-  void onSelectSubSection(SubSection subSection) async {
-    selectedSubSection.value = subSection;
-    selectedComity.value = null;
-    update();
-  }
-
-  void onSelectComity(Comity comity) async {
-    selectedComity.value = comity;
+    selectedSexUpdate.value = sex;
+    selectedSexRegister.value = sex;
     update();
   }
 
   ///Actulisation manuelle des valeurs des variables Rx<?>  du controlleur DropdownController
   void refreshData() {
-    selectedDiplome.refresh();
-    selectedType.refresh();
-    selectedSex.refresh();
+    selectedDiplomeRegister.refresh();
+    selectedTypeRegister.refresh();
+    selectedDiplomeUpdate.refresh();
+    selectedTypeUpdate.refresh();
+    selectedSexRegister.refresh();
+    selectedSexUpdate.refresh();
   }
 
   void reset() {
     logger().w('dropdown controller reset evoked');
     update();
+    selectedDiplomeRegister.refresh();
+    selectedTypeRegister.refresh();
+    selectedDiplomeUpdate.refresh();
+    selectedTypeUpdate.refresh();
+    selectedSexRegister.refresh();
+    selectedSexUpdate.refresh();
   }
 }

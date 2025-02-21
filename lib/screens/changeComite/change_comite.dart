@@ -100,7 +100,7 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
                               onChanged: null,
                               obscure: false,
                               keyboardType: TextInputType.text,
-                              hintText: "Code d'adhérent"),
+                              hintText: "Code d'adhérent ou Telephone"),
                         )),
                     SizedBox(
                       height: displayHeight(context) * 0.05,

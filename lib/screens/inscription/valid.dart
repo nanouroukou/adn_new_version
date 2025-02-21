@@ -104,26 +104,24 @@ class _ValidationScreenState extends State<ValidationScreen> {
                 ),
         ),
         Gap(displayHeight(context) * 0.008),
-        Padding(
-          padding: EdgeInsets.fromLTRB(displayHeight(context) * 0.15, 0, 0, 0),
-          child: Row(
-            children: [
-              Text(
-                "Numéro Matricule: ",
-                style: TextStyle(
-                    color: loginColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: Get.height * 0.025),
-              ),
-              Text(
-                apiServices.code.value,
-                style: TextStyle(
-                    color: loginColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: Get.height * 0.025),
-              ),
-            ],
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Numéro Matricule: ",
+              style: TextStyle(
+                  color: loginColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: Get.height * 0.025),
+            ),
+            Text(
+              apiServices.code.value,
+              style: TextStyle(
+                  color: loginColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: Get.height * 0.025),
+            ),
+          ],
         ),
         Gap(displayHeight(context) * 0.02),
         IconButtonWidget(

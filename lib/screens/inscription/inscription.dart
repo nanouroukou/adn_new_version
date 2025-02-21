@@ -62,6 +62,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final prenomPereController = TextEditingController();
   final prenomMereController = TextEditingController();
   final nomMereController = TextEditingController();
+  final nomPereController = TextEditingController();
   final senderName = TextEditingController();
   final senderAddress = TextEditingController();
   final receiverName = TextEditingController();
@@ -143,14 +144,15 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       prenomPere: prenomPereController.value.text,
       prenomMere: prenomMereController.value.text,
       nomMere: nomMereController.value.text,
-      sexe: dropdownController.selectedSex.value,
+      nomPere: nomMereController.value.text,
+      sexe: dropdownController.selectedSexRegister.value,
       nationality: nationalityPereController.value.text,
       placeOfBirthday: placeOfBirthdayController.value.text,
       profession: professionController.value.text,
       position: posteController.value.text,
       personToContact: personToContactController.text,
-      identityType: {'id': dropdownController.selectedType.value?.id},
-      degree: {'id': dropdownController.selectedDiplome.value?.id},
+      identityType: {'id': dropdownController.selectedTypeRegister.value?.id},
+      degree: {'id': dropdownController.selectedDiplomeRegister.value?.id},
       identityCardNumber: identityCardNumberController.value.text,
     );
 
@@ -492,14 +494,15 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                       print(value);
                     },
                     hintText: 'Numéro de telephone',
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      TestMaskFormatter(
-                        mask: 'xx xx xx xx',
-                        separator: ' ',
-                      ),
-                    ],
                   ),
+                  TextFieldWidget(
+                    controller: nomPereController,
+                    obscure: false,
+                    keyboardType: TextInputType.name,
+                    onChanged: (value) {},
+                    hintText: 'Nom du père',
+                  ),
+                  Gap(Get.height * 0.03),
                   TextFieldWidget(
                     controller: prenomPereController,
                     obscure: false,
@@ -899,7 +902,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<TypePiece>(
-              value: dropdownController.selectedType.value,
+              value: dropdownController.selectedTypeRegister.value,
               disabledHint: const Text(
                 'Type de piece non disponible',
                 style: TextStyle(color: Colors.white),
@@ -930,7 +933,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<String>(
-              value: dropdownController.selectedSex.value,
+              value: dropdownController.selectedSexRegister.value,
               disabledHint: const Text(
                 'Genre non disponible',
                 style: TextStyle(color: Colors.white),
@@ -959,7 +962,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
         padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
         child: GetBuilder<DropdownController>(
           builder: (dropdownController) => DropdownButtonFormField<Diplome>(
-              value: dropdownController.selectedDiplome.value,
+              value: dropdownController.selectedDiplomeRegister.value,
               disabledHint: const Text(
                 'Dipome non disponible',
                 style: TextStyle(color: Colors.white),

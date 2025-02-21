@@ -261,12 +261,21 @@ class ApiServices extends GetxController {
 
   Future<Adherent?> getAdherentByCode(String code,
       {bool showAlert = true}) async {
+    var bodyJson;
     try {
-      var bodyJson = jsonEncode({"codeAdherent": code});
+      if (code.length == 6) {
+        print("le code est ${code}");
+
+        bodyJson = jsonEncode({"codeAdherent": code});
+      } else {
+        bodyJson = jsonEncode({"phone": code});
+        print("le code est ${bodyJson}");
+      }
       final response = await http.post(
           Uri.parse('$BASE_URL/api/adherent/search'),
           body: bodyJson,
           headers: await buildHeaders());
+
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
         if (bodyJson['status'] == 1) {

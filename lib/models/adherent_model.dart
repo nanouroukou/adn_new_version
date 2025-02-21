@@ -24,6 +24,7 @@ class Adherent {
   String? picture;
   String? prenomMere;
   String? nomMere;
+  String? nomPere;
   String? codeAdherent;
   String? identityDocImage;
   Level? level;
@@ -69,6 +70,7 @@ class Adherent {
       this.suspendReason,
       this.suspend,
       this.degree,
+      this.nomPere,
       this.deactivateReason});
 
   // Méthode pour convertir un JSON en objet Adherent
@@ -83,6 +85,7 @@ class Adherent {
       prenomPere: json['prenomPere'],
       prenomMere: json['prenomMere'],
       nomMere: json['nomMere'],
+      nomPere: json['nomPere'],
       personToContact: json['personToContact'],
       profession: json['profession'],
       position: json['position'],
@@ -119,6 +122,7 @@ class Adherent {
       'prenomPere': prenomPere,
       'prenomMere': prenomMere,
       'nomMere': nomMere,
+      'nomPere': nomPere,
       'picture': picture,
       'indicePays': indicePays,
       'codeAdherent': codeAdherent,
