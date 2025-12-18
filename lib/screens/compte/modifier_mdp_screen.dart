@@ -175,7 +175,7 @@ class _ModifierMdpScreenState extends State<ModifierMdpScreen> {
                         ButtonWidget(
                           title: 'Modifier',
                           colour: loginColor,
-                          onPressed: showLoading ? null : onModifier(),
+                          onPressed: () => showLoading ? null : onModifier(),
                         )
                       ]),
                     ),

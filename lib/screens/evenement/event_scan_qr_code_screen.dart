@@ -1,14 +1,9 @@
 import 'dart:io';
 
-import 'package:cherifla/screens/changeComite/change_comite_target.dart';
-import 'package:cherifla/screens/evenement/evenementPreview.dart';
 import 'package:cherifla/services/api/api.services.dart';
-import 'package:cherifla/utils/color/color.dart';
-import 'package:cherifla/utils/log/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
 
 class EventScanQrCodeScreen extends StatefulWidget {
   const EventScanQrCodeScreen({super.key});
@@ -20,20 +15,13 @@ class EventScanQrCodeScreen extends StatefulWidget {
 class _EventScanQrCodeScreenState extends State<EventScanQrCodeScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final api = ApiServices();
-  Barcode? result;
-  QRViewController? controller;
-  var showLoading = false;
 
-  // In order to get hot reload to work we need to pause the camera if the platform
-  // is android, or resume the camera if the platform is iOS.
+  var showLoading = false;
   @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller!.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller!.resumeCamera();
-    }
+    } else if (Platform.isIOS) {}
   }
 
   @override
@@ -43,73 +31,31 @@ class _EventScanQrCodeScreenState extends State<EventScanQrCodeScreen> {
         children: <Widget>[
           Expanded(
             flex: 5,
-            child: QRView(
-              key: qrKey,
-              overlay: QrScannerOverlayShape(
-                  cutOutSize: 250,
-                  borderColor: primaryColor,
-                  borderWidth: 10,
-                  borderRadius: 18,
-                  overlayColor: Colors.black.withOpacity(0.8)),
-              onQRViewCreated: _onQRViewCreated,
+            child: Stack(
+              children: [
+                MobileScanner(
+                  controller: MobileScannerController(autoStart: true),
+                  onDetect: (data) {
+                    MobileScannerController().stop();
+                    api.getAdherentByCodeEvent(api.idEvent.value,
+                        data.barcodes.first.rawValue.toString(),
+                        showAlert: true);
+                  },
+                ),
+                QRScannerOverlay(
+                    scanAreaHeight: 240,
+                    scanAreaWidth: 240,
+                    overlayColor: Colors.black.withValues(alpha: 0.8)),
+              ],
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: (result != null)
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(' Data: ${result!.code}'),
-                        IconButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                            },
-                            icon: const Icon(
-                              Icons.flashlight_on_outlined,
-                              color: primaryColor,
-                              size: 40,
-                            ))
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text('Scannez le qr code'),
-                        IconButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                            },
-                            icon: const Icon(
-                              Icons.flashlight_on_outlined,
-                              color: primaryColor,
-                              size: 40,
-                            ))
-                      ],
-                    ),
-            ),
-          )
         ],
       ),
     );
   }
 
-  Future<void> _onQRViewCreated(QRViewController controller) async {
-    this.controller = controller;
-    controller.scannedDataStream.first.then((scanData) {
-      HapticFeedback.vibrate();
-      setState(() {
-        result = scanData;
-      });
-      api.getAdherentByCodeEvent(api.idEvent.value, result?.code ?? '',
-          showAlert: true);
-    });
-  }
-
   @override
   void dispose() {
-    controller?.dispose();
     super.dispose();
   }
 }

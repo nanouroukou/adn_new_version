@@ -7,9 +7,8 @@ import 'package:cherifla/screens/login/login.dart';
 import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/log/logger.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'
-    hide Options;
 import 'package:get/get.dart' hide Response;
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
@@ -18,7 +17,7 @@ import '../../controller/user.controller.dart';
 import '../../models/user.model.dart';
 
 class AuthService {
-  static String BASE_URL = "https://api24.sama.com.ml";
+  static String BASE_URL = "https://api24.sama.money";
 
   final _secureStorage = const FlutterSecureStorage();
   final LocalAuthentication localAuth = LocalAuthentication();

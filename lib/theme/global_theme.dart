@@ -14,10 +14,10 @@ class GlobalTheme {
     ).copyWith(
       secondary: Colors.green, // Couleur secondaire (accentuée)
     ),
-    dialogTheme: const DialogTheme(
-      titleTextStyle: TextStyle(fontSize: 18, color: Colors.white),
-      surfaceTintColor: primaryColor,
-    ),
+    // dialogTheme: const DialogTheme(
+    //   titleTextStyle: TextStyle(fontSize: 18, color: Colors.white),
+    //   surfaceTintColor: primaryColor,
+    // ),
 
     textTheme: const TextTheme(
       displayLarge: TextStyle(
@@ -40,12 +40,12 @@ class GlobalTheme {
     ),
     // Personnalisation de l'AppBar
     appBarTheme: AppBarTheme(
-      color: Colors.blue[300], // Couleur de fond
-      titleTextStyle: const TextStyle(
-          color: Colors.white, fontSize: 20.0), // Style du texte du titre
-      iconTheme: const IconThemeData(color: Colors.white),
-      systemOverlayStyle: SystemUiOverlayStyle.light // Couleur des icônes
-    ),
+        color: Colors.blue[300], // Couleur de fond
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 20.0), // Style du texte du titre
+        iconTheme: const IconThemeData(color: Colors.white),
+        systemOverlayStyle: SystemUiOverlayStyle.light // Couleur des icônes
+        ),
 
     iconTheme: IconThemeData(
       color: Colors.blue[200], // Couleur des icônes
@@ -76,22 +76,19 @@ class GlobalTheme {
       foregroundColor: Colors.white, // Couleur de l'icône
     ),
     // Personnalisation des cartes
-    cardTheme: const CardTheme(
-      color: Colors.white,
-      shadowColor: primaryColorLight,
-      elevation: 5,
-    ),
+    // cardTheme: const CardTheme(
+    //   color: Colors.white,
+    //   shadowColor: primaryColorLight,
+    //   elevation: 5,
+    // ),
     bottomNavigationBarTheme:
         const BottomNavigationBarThemeData(backgroundColor: Colors.white),
 
     snackBarTheme: const SnackBarThemeData(
         backgroundColor: primaryColor,
         insetPadding: EdgeInsets.symmetric(vertical: 22, horizontal: 8)),
-        dropdownMenuTheme: const DropdownMenuThemeData(
-          menuStyle: MenuStyle(
-            backgroundColor: WidgetStatePropertyAll(primaryColor)
-          )
-        ),
-        
+    dropdownMenuTheme: const DropdownMenuThemeData(
+        menuStyle:
+            MenuStyle(backgroundColor: WidgetStatePropertyAll(primaryColor))),
   );
 }

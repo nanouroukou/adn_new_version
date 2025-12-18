@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cherifla/constants/app_texts.dart';
-import 'package:cherifla/controller/dropdown_controller.dart';
 import 'package:cherifla/models/adherent_creation.dart';
 import 'package:cherifla/models/adherent_model.dart';
 import 'package:cherifla/models/comity_model.dart';
@@ -12,7 +10,6 @@ import 'package:cherifla/models/federation_model.dart';
 import 'package:cherifla/models/piece_model.dart';
 import 'package:cherifla/models/section_model.dart';
 import 'package:cherifla/models/sub_section_model.dart';
-import 'package:cherifla/screens/changeComite/change_comite.dart';
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/screens/login/login.dart';
 import 'package:cherifla/services/authentification/auth.service.dart';
@@ -20,10 +17,9 @@ import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/format/date.dart';
 import 'package:cherifla/utils/log/logger.dart';
 import 'package:cherifla/utils/security/token.util.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'
-    hide Options;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -58,7 +54,7 @@ class ApiServices extends GetxController {
 
   DateFormat formatter = DateFormat("yyyy-mm-dd");
   static final ApiServices _instance = ApiServices._internal();
-  static String BASE_URL = "https://api24.sama.com.ml";
+  static String BASE_URL = "https://api24.sama.money";
   final _secureStorage = const FlutterSecureStorage();
   var code = "".obs;
   var link = "".obs;
@@ -505,13 +501,12 @@ class ApiServices extends GetxController {
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
         if (bodyJson['status'] == 1) {
-          print("le dat sont ${bodyJson['status']}");
           List types = bodyJson['body'];
           return types.map((json) => TypePiece.fromJson(json)).toList();
-          // logger().d('Historique OK');
-          // return types;
         } else {
           Alert.showErrorDialog(bodyJson['message']);
+          print("l'errre is ====> ${bodyJson['message']}");
+
           logger().e(response.body);
           return null;
         }

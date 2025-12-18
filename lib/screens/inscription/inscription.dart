@@ -617,7 +617,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   TextFieldWidget(
                     controller: personToContactController,
                     obscure: false,
-                    keyboardType: TextInputType.name,
+                    keyboardType: TextInputType.number,
                     onChanged: (value) {},
                     hintText: 'Numero de la personne à contacter',
                   ),

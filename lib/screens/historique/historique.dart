@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/color/color.dart';
-import '../../utils/mediaQuery/size.dart';
 import '../../widgets/background/background.dart';
 
 class HistoriqueScreen extends StatefulWidget {

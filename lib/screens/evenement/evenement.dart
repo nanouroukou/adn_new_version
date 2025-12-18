@@ -1,6 +1,3 @@
-import 'package:cherifla/screens/changeComite/change_comite_target.dart';
-import 'package:cherifla/screens/changeComite/scan_qr_code_screen.dart';
-import 'package:cherifla/screens/evenement/evenementPreview.dart';
 import 'package:cherifla/screens/evenement/event_scan_qr_code_screen.dart';
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
@@ -11,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import '../../constants/app_texts.dart';
 import '../../utils/color/color.dart';
 import '../../utils/mediaQuery/size.dart';
 import '../../widgets/background/background.dart';

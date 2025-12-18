@@ -1,4 +1,3 @@
-import 'package:cherifla/screens/compte/modifier_mdp_screen.dart';
 import 'package:cherifla/screens/evenement/evenement.dart';
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
@@ -12,7 +11,6 @@ import 'package:intl/intl.dart';
 
 import '../../utils/color/color.dart';
 import '../../utils/mediaQuery/size.dart';
-
 
 class EventListScreen extends StatefulWidget {
   const EventListScreen({super.key});
@@ -32,7 +30,7 @@ class _EventListScreenState extends State<EventListScreen> {
     // TODO: implement initState
     super.initState();
     api.getEvenement().then(
-          (value) {
+      (value) {
         setState(() {
           _showLoading = true;
         });
@@ -44,8 +42,8 @@ class _EventListScreenState extends State<EventListScreen> {
         }
       },
     ).whenComplete(() => setState(() {
-      _showLoading = false;
-    }));
+          _showLoading = false;
+        }));
   }
 
   @override
@@ -54,8 +52,8 @@ class _EventListScreenState extends State<EventListScreen> {
       data: ThemeData(
         canvasColor: redColor,
         colorScheme: Theme.of(context).colorScheme.copyWith(
-          primary: loginColor,
-        ),
+              primary: loginColor,
+            ),
       ),
       child: Scaffold(
           appBar: buildAppBar(title: 'Evenement'),
@@ -90,27 +88,30 @@ class _EventListScreenState extends State<EventListScreen> {
             ),
           ),
           Gap(displayHeight(context) * 0.01),
-
           Column(
             children: List.generate(evenement.length, (index) {
               var item = evenement[index];
-              var value= item['id'] ?? '';
+              var value = item['id'] ?? '';
               api.idEvent.value = value.toString();
               var nom = item['name'] ?? '';
-              return buildButtonParam(nom,(){Get.to( ()=>const EvenementScreen());});
+              return buildButtonParam(nom, () {
+                Get.to(() => const EvenementScreen());
+              });
             }),
           )
         ]));
   }
 
-
-  Container buildButtonParam(String title, void Function() onPressed, ) {
+  Container buildButtonParam(
+    String title,
+    void Function() onPressed,
+  ) {
     return Container(
       width: displayWidth(context),
       margin: EdgeInsets.symmetric(
           vertical: displayHeight(context) * 0.01,
           horizontal: displayWidth(context) * 0.06),
-      child:  ElevatedButton(
+      child: ElevatedButton(
           style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.white),
               elevation: WidgetStatePropertyAll(4),
@@ -118,12 +119,9 @@ class _EventListScreenState extends State<EventListScreen> {
           onPressed: onPressed,
           child: Text(
             title,
-            style:  TextStyle(color: primaryColor, fontSize: displayWidth(context)*0.045),
+            style: TextStyle(
+                color: primaryColor, fontSize: displayWidth(context) * 0.045),
           )),
     );
   }
-
 }
-
-
-

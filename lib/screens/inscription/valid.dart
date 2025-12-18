@@ -57,32 +57,32 @@ class _ValidationScreenState extends State<ValidationScreen> {
   Widget getBody() {
     return Column(
       children: [
-        Gap(displayHeight(context) * 0.04),
-        Text(
-          "la personne inscrite recevra ",
-          style: TextStyle(
-            color: loginColor,
-            fontWeight: FontWeight.bold,
-            fontSize: Get.height * 0.025,
-          ),
-        ),
-        Gap(displayHeight(context) * 0.005),
-        Text(
-          "un message par SMS",
-          style: TextStyle(
-            color: loginColor,
-            fontWeight: FontWeight.bold,
-            fontSize: Get.height * 0.025,
-          ),
-        ),
-        Gap(displayHeight(context) * 0.005),
-        Text(
-          "contenant son numéro Matricule ",
-          style: TextStyle(
-              color: loginColor,
-              fontWeight: FontWeight.bold,
-              fontSize: Get.height * 0.025),
-        ),
+        // Gap(displayHeight(context) * 0.04),
+        // Text(
+        //   "la personne inscrite recevra ",
+        //   style: TextStyle(
+        //     color: loginColor,
+        //     fontWeight: FontWeight.bold,
+        //     fontSize: Get.height * 0.025,
+        //   ),
+        // ),
+        // Gap(displayHeight(context) * 0.005),
+        // Text(
+        //   "un message par SMS",
+        //   style: TextStyle(
+        //     color: loginColor,
+        //     fontWeight: FontWeight.bold,
+        //     fontSize: Get.height * 0.025,
+        //   ),
+        // ),
+        // Gap(displayHeight(context) * 0.005),
+        // Text(
+        //   "contenant son numéro Matricule ",
+        //   style: TextStyle(
+        //       color: loginColor,
+        //       fontWeight: FontWeight.bold,
+        //       fontSize: Get.height * 0.025),
+        // ),
         Gap(displayHeight(context) * 0.04),
         Container(
           height: displayHeight(context) * 0.30,
