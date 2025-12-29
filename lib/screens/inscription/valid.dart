@@ -20,19 +20,19 @@ class ValidationScreen extends StatefulWidget {
   State<ValidationScreen> createState() => _ValidationScreenState();
 }
 
-String message = "merci de recevoir votre code adehenent";
+final apiServices = ApiServices();
+final dropdownController = Get.put(DropdownController());
 
 class _ValidationScreenState extends State<ValidationScreen> {
-  final apiServices = ApiServices();
-  final dropdownController = Get.put(DropdownController());
   launchWhatsappWithMobileNumber() async {
-    print("evoie what sapp");
-    final url =
-        "whatsapp://send?phone=${apiServices.phone.value}&text=$message ${apiServices.code.value}";
-    if (await canLaunchUrl(Uri.parse(Uri.encodeFull(url)))) {
-      await launchUrl(Uri.parse(Uri.encodeFull(url)));
+    String message =
+        "merci de recevoir votre code  adehenent ${apiServices.code.value} ";
+    final Uri whatsappUri = Uri.parse(
+        'https://wa.me/${apiServices.phone.value}?text=${Uri.encodeComponent(message)}');
+    if (await canLaunchUrl(whatsappUri)) {
+      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
     } else {
-      throw 'Could not launch $url';
+      await launchUrl(whatsappUri, mode: LaunchMode.platformDefault);
     }
   }
 

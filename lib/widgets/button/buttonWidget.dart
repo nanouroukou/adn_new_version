@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget(
       {super.key,
-       this.colour,
+      this.colour,
       required this.title,
       required this.onPressed,
-       this.border,
+      this.border,
       this.size,
       this.height,
       this.width,
@@ -20,12 +20,12 @@ class ButtonWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final Color? textColor;
-  final Function() onPressed;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? displayWidth(context)*0.5,
+      width: width ?? displayWidth(context) * 0.5,
       height: height ?? 60,
       child: TextButton(
         style: TextButton.styleFrom(foregroundColor: Colors.transparent),
@@ -38,7 +38,7 @@ class ButtonWidget extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                  fontSize: size?? displayWidth(context)*0.05,
+                  fontSize: size ?? displayWidth(context) * 0.05,
                   letterSpacing: 1,
                   color: textColor ?? Colors.white,
                   fontWeight: FontWeight.bold),
