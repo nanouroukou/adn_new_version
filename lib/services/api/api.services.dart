@@ -17,6 +17,7 @@ import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/format/date.dart';
 import 'package:cherifla/utils/log/logger.dart';
 import 'package:cherifla/utils/security/token.util.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -662,8 +663,18 @@ class ApiServices extends GetxController {
     return null;
   }
 
-  Future inscrireAdherentWithImage(
-      File file, File identityDoc, AdherentCreation body) async {
+  Future inscrireAdherentWithoutImage(
+      {File? file, File? identityDoc, AdherentCreation? body}) async {
+    // var data = FormData.fromMap({
+    //   'body': body,
+    //   'identityDoc': await MultipartFile.fromFile(
+    //     identityDoc!.path,
+    //   ),
+    //   'file': await MultipartFile.fromFile(
+    //     file!.path,
+    //   ),
+    // });
+
     // Récupérer le token et sa date d'expiration
 
     print("les data${body}");
@@ -679,11 +690,97 @@ class ApiServices extends GetxController {
       request.headers['Authorization'] = 'Bearer $token';
 
       // Préparer l'image à partir du fichier
-      var imageProfile = await http.MultipartFile.fromPath('file', file.path,
+      var imageProfile = await http.MultipartFile.fromPath('file', file!.path,
+          contentType: MediaType.parse(lookupMimeType(file.path)!));
+
+      //
+      request.files.add(imageProfile);
+      logger().d('MIME FICHIER ${lookupMimeType(file.path)}');
+
+      //
+      request.files.add(http.MultipartFile.fromString(
+        'subscribeMemberReq',
+        json.encode(body), // Données JSON
+        contentType: MediaType(
+            'application', 'json'), // Spécifiez le type MIME pour le JSON
+      ));
+
+      //
+      http.Response response =
+          await http.Response.fromStream(await request.send());
+
+      if (response.statusCode == 200) {
+        final bodyJson = jsonDecode(response.body);
+
+        if (bodyJson['status'] == 1) {
+          code.value = bodyJson['body']['codeAdherent'];
+          link.value = bodyJson['body']['link'];
+          phone.value = bodyJson['body']['phone'];
+
+          // Alert.showInfoDialog(resJson['message'],
+          Get.offAll(ValidationScreen());
+          return bodyJson;
+        }
+
+        // if (bodyJson['status'] == 1) {
+        //   print("le message st${bodyJson['message']} ");
+        //   Get.offAll(ValidationScreen());
+        //   // Alert.showInfoDialog(bodyJson['message'], backTo: const HomeScreen());
+        // }
+        else {
+          Alert.showErrorDialog(bodyJson['message']);
+          logger().e(bodyJson['message']);
+        }
+      } else {
+        logger().w('INSCRIPTION STATUS NOT 200');
+        logger().w('${response.statusCode} : ${response.body}');
+        Alert.showErrorDialog(
+            "Erreur interne ! (Status ${response.statusCode})");
+        return null;
+      }
+    } else {
+      // Gestion du cas où le token est invalide ou expiré
+      logger().w('Token non trouvé, invalide ou expiré');
+      Alert.showConfirmDialog(Texts.errorInvalidToken, () async {
+        AuthService().clearAuthStorage();
+        Get.off(() => const LoginScreen());
+      });
+      return null;
+    }
+  }
+
+  Future inscrireAdherentWithImage(
+      {File? file, File? identityDoc, AdherentCreation? body}) async {
+    // var data = FormData.fromMap({
+    //   'body': body,
+    //   'identityDoc': await MultipartFile.fromFile(
+    //     identityDoc!.path,
+    //   ),
+    //   'file': await MultipartFile.fromFile(
+    //     file!.path,
+    //   ),
+    // });
+
+    // Récupérer le token et sa date d'expiration
+
+    print("les data${body}");
+    String? token = await _secureStorage.read(key: 'token');
+    String? tokenExpirationDate =
+        await _secureStorage.read(key: 'expirationDate');
+
+    // Validation du token
+    if (token != null && !isTokenExpired(tokenExpirationDate!)) {
+      var request =
+          http.MultipartRequest('POST', Uri.parse('$BASE_URL/api/adherent'));
+
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Préparer l'image à partir du fichier
+      var imageProfile = await http.MultipartFile.fromPath('file', file!.path,
           contentType: MediaType.parse(lookupMimeType(file.path)!));
 
       var imageIdentity = await http.MultipartFile.fromPath(
-          'identityDoc', identityDoc.path,
+          'identityDoc', identityDoc!.path,
           contentType: MediaType.parse(lookupMimeType(identityDoc.path)!));
 
       //

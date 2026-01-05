@@ -75,8 +75,8 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final personToContactController = TextEditingController();
   var _showLoading = false;
 
-  File? imageFileProfile;
-  File? imageFileIdentity;
+  var imageFileProfile;
+  var imageFileIdentity;
   final double imageHeight = Get.height * 2.30;
   final double imageWidth = Get.height * 2.10;
   bool isCompleted = false;
@@ -156,19 +156,36 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       identityCardNumber: identityCardNumberController.value.text,
     );
 
-    apiServices
-        .inscrireAdherentWithImage(imageFileProfile!, imageFileIdentity!, adh)
-        .then(
-      (value) {
-        setState(() {
-          _showLoading == false;
-        });
-      },
-    ).whenComplete(
-      () => setState(() {
-        _showLoading = false;
-      }),
-    );
+    imageFileIdentity.toString().isEmpty
+        ? apiServices
+            .inscrireAdherentWithImage(
+                file: imageFileProfile,
+                identityDoc: imageFileIdentity,
+                body: adh)
+            .then(
+            (value) {
+              setState(() {
+                _showLoading == false;
+              });
+            },
+          ).whenComplete(
+            () => setState(() {
+              _showLoading = false;
+            }),
+          )
+        : apiServices
+            .inscrireAdherentWithoutImage(file: imageFileProfile, body: adh)
+            .then(
+            (value) {
+              setState(() {
+                _showLoading == false;
+              });
+            },
+          ).whenComplete(
+            () => setState(() {
+              _showLoading = false;
+            }),
+          );
   }
 
   Future pickImageProfileFromCamera() async {
@@ -188,7 +205,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   Future pickImageIdentityFromCamera() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.camera);
-      if (image == null) return;
+      if (image == null) return imageFileIdentity = image as File?;
       setState(() {
         imageFileIdentity = File(image.path);
       });
@@ -293,7 +310,9 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                                                 BorderRadius.circular(5.0),
                                           ),
                                         ),
-                                        onPressed: details.onStepCancel,
+                                        onPressed: _showLoading
+                                            ? null
+                                            : details.onStepCancel,
                                         child: Text(
                                           'Precedent',
                                           style: TextStyle(
@@ -512,13 +531,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   ),
                   Gap(Get.height * 0.03),
                   TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'prénom(s) du père obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
                     controller: prenomMereController,
                     obscure: false,
                     keyboardType: TextInputType.name,
@@ -691,77 +703,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
           title: const Text(''),
           content: Form(
             key: formKey[3],
-            // child: Column(
-            //   children: [
-            //     _buildFederationDw(),
-            //     _buildSectionDw(),
-            //     _buildSubSectionDw(),
-            //     _buildComityDw(),
-            //     Gap(Get.height * 0.04),
-            //     TextFormField(
-            //       validator: (value) {
-            //         if (value == null || value.isEmpty) {
-            //           return 'Selectionnez une date';
-            //         }
-            //         return null;
-            //       },
-            //       controller: dateAdhesionController,
-            //       keyboardType: TextInputType.datetime,
-            //       inputFormatters: [
-            //         TestMaskFormatter(mask: 'xx-xx-xxxx', separator: '-')
-            //       ],
-            //       onTap: () {
-            //         dateAdhesionController.clear();
-            //       },
-            //       style: const TextStyle(color: Colors.white),
-            //       decoration: InputDecoration(
-            //           prefixIconColor: Colors.white,
-            //           prefixIcon: InkWell(
-            //               onTap: () async {
-            //                 var pickedDate = await showDatePicker(
-            //                     context: context,
-            //                     firstDate: DateTime(2010),
-            //                     lastDate: DateTime.now());
-            //                 if (pickedDate != null) {
-            //
-            //                   setState(() {
-            //                     dateAdhesionController.text =
-            //                       DateFormat('dd-MM-yyyy')
-            //                           .format(pickedDate);
-            //                     dateAdhesion =
-            //                         DateFormat('yyyy-MM-dd').format(pickedDate);
-            //
-            //                   });
-            //
-            //                   // print('date adhesion $dateAdhesion');
-            //                 }
-            //               },
-            //               child: const Icon(Icons.calendar_month)),
-            //           hintText: "Date d'adhésion (dd-mm-yyyy) ",
-            //           focusedBorder: const OutlineInputBorder(
-            //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            //               borderSide: BorderSide(color: primaryColor)),
-            //           errorStyle: const TextStyle(color: textColor),
-            //           hintStyle: const TextStyle(
-            //             fontSize: 18,
-            //             fontWeight: FontWeight.normal,
-            //             color: Colors.white,
-            //           ),
-            //           filled: true,
-            //           fillColor: primaryColorLight,
-            //           enabledBorder: OutlineInputBorder(
-            //               borderSide:
-            //                   const BorderSide(width: 2, color: primaryColor),
-            //               borderRadius: BorderRadius.circular(5)),
-            //           border: OutlineInputBorder(
-            //               borderSide:
-            //                   const BorderSide(width: 0, color: primaryColor),
-            //               borderRadius: BorderRadius.circular(15))),
-            //     ),
-            //     Gap(Get.height * 0.04),
-            //     Gap(Get.height * 0.04),
-            //   ],
-            // ),
             child: Column(
               children: [
                 SizedBox(

@@ -429,7 +429,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                                         onPressed: details.onStepContinue,
                                         child:
                                             currentStep == getSteps().length - 1
-                                                ? Text('Mettre à jour',
+                                                ? Text('Modifier',
                                                     style: TextStyle(
                                                         fontSize:
                                                             Get.height * 0.020))
