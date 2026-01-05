@@ -158,10 +158,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
     imageFileIdentity.toString().isEmpty
         ? apiServices
-            .inscrireAdherentWithImage(
-                file: imageFileProfile,
-                identityDoc: imageFileIdentity,
-                body: adh)
+            .inscrireAdherentWithoutImage(file: imageFileProfile, body: adh)
             .then(
             (value) {
               setState(() {
@@ -174,7 +171,10 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
             }),
           )
         : apiServices
-            .inscrireAdherentWithoutImage(file: imageFileProfile, body: adh)
+            .inscrireAdherentWithImage(
+                file: imageFileProfile,
+                identityDoc: imageFileIdentity,
+                body: adh)
             .then(
             (value) {
               setState(() {
