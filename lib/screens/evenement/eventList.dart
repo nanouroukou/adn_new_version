@@ -91,11 +91,13 @@ class _EventListScreenState extends State<EventListScreen> {
           Column(
             children: List.generate(evenement.length, (index) {
               var item = evenement[index];
-              var value = item['id'] ?? '';
-              api.idEvent.value = value.toString();
+              // var value = item['id'] ?? '';
+              // api.idEvent.value = item['id'].toString();
               var nom = item['name'] ?? '';
               return buildButtonParam(nom, () {
-                Get.to(() => const EvenementScreen());
+                Get.to(() => EvenementScreen(
+                      id: item['id'].toString(),
+                    ));
               });
             }),
           )

@@ -13,7 +13,8 @@ import '../../utils/mediaQuery/size.dart';
 import '../../widgets/background/background.dart';
 
 class EvenementScreen extends StatefulWidget {
-  const EvenementScreen({super.key});
+  const EvenementScreen({super.key, required this.id});
+  final String id;
 
   @override
   State<EvenementScreen> createState() => _ChangeComiteScreenState();
@@ -33,7 +34,7 @@ class _ChangeComiteScreenState extends State<EvenementScreen> {
         showLoading = true;
       });
       api
-          .getAdherentByCodeEvent(api.idEvent.value, codeController.value.text)
+          .getAdherentByCodeEvent(widget.id, codeController.value.text)
           .then((value) {
         if (value != null) {
           setState(() {
@@ -58,13 +59,13 @@ class _ChangeComiteScreenState extends State<EvenementScreen> {
           alignment: Alignment.topCenter,
           children: [
             const Background(),
-            getBody(),
+            getBody(widget.id),
             if (showLoading) getLoader()
           ],
         ));
   }
 
-  Widget getBody() => Container(
+  Widget getBody(String id) => Container(
         padding: EdgeInsets.symmetric(
             horizontal: displayWidth(context) * 0.01,
             vertical: displayWidth(context) * 0.01),
@@ -83,8 +84,10 @@ class _ChangeComiteScreenState extends State<EvenementScreen> {
                           child: TextFieldWidget(
                               controller: codeController,
                               suffix: IconButton(
-                                  onPressed: () => Get.to(
-                                      () => const EventScanQrCodeScreen()),
+                                  onPressed: () =>
+                                      Get.to(() => EventScanQrCodeScreen(
+                                            id: id,
+                                          )),
                                   icon: const Icon(
                                     Icons.qr_code_scanner,
                                     color: Colors.white,

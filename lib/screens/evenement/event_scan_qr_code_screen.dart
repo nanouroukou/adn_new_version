@@ -6,7 +6,8 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_scanner_overlay/qr_scanner_overlay.dart';
 
 class EventScanQrCodeScreen extends StatefulWidget {
-  const EventScanQrCodeScreen({super.key});
+  const EventScanQrCodeScreen({super.key, required this.id});
+  final String id;
 
   @override
   State<EventScanQrCodeScreen> createState() => _EventScanQrCodeScreenState();
@@ -37,8 +38,8 @@ class _EventScanQrCodeScreenState extends State<EventScanQrCodeScreen> {
                   controller: MobileScannerController(autoStart: true),
                   onDetect: (data) {
                     MobileScannerController().stop();
-                    api.getAdherentByCodeEvent(api.idEvent.value,
-                        data.barcodes.first.rawValue.toString(),
+                    api.getAdherentByCodeEvent(
+                        widget.id, data.barcodes.first.rawValue.toString(),
                         showAlert: true);
                   },
                 ),

@@ -17,7 +17,6 @@ import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/format/date.dart';
 import 'package:cherifla/utils/log/logger.dart';
 import 'package:cherifla/utils/security/token.util.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -50,7 +49,7 @@ class ApiServices extends GetxController {
   // DateFormat formatter = DateFormat("yyyy-mm-dd");
 
   var idEventController = TextEditingController();
-  var idEvent = "".obs;
+  // var idEvent = "".obs;
   var sexList = <dynamic>[].obs;
 
   DateFormat formatter = DateFormat("yyyy-mm-dd");
@@ -318,7 +317,6 @@ class ApiServices extends GetxController {
 
   Future<Adherent?> getAdherentByCodeEvent(String id, String code,
       {bool showAlert = true}) async {
-    print("qrcodehgjggjhgh");
     try {
       var bodyJson = jsonEncode({
         "event": {"id": id},
@@ -328,6 +326,9 @@ class ApiServices extends GetxController {
           Uri.parse('$BASE_URL/api/event/validate-adh-to-event'),
           body: bodyJson,
           headers: await buildHeaders());
+
+      print("the json data is ${jsonEncode(bodyJson)}");
+
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
         if (bodyJson['status'] == 1) {
@@ -638,6 +639,8 @@ class ApiServices extends GetxController {
           body: body, headers: await buildHeaders());
       if (response.statusCode == 200) {
         final bodyJson = jsonDecode(response.body);
+        print("the json data is ${jsonEncode(bodyJson)}");
+
         if (bodyJson['status'] == 1) {
           List adherents = bodyJson['body']['content'];
           logger().d('Historique OK');

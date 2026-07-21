@@ -1,7 +1,6 @@
 import 'package:cherifla/screens/changeComite/change_comite.dart';
 import 'package:cherifla/screens/compte/compte_screen.dart';
 import 'package:cherifla/screens/compte/modifier_mdp_screen.dart';
-import 'package:cherifla/screens/evenement/evenement.dart';
 import 'package:cherifla/screens/historique/historique.dart';
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/screens/inscription/inscription.dart';
@@ -23,40 +22,40 @@ class Routes {
   static final getPages = [
     GetPage(
       name: splashRoute,
-      page: () =>  const SplashScreen(),
+      page: () => const SplashScreen(),
     ),
     GetPage(
       name: loginRoute,
-      page: () =>  const LoginScreen(),
+      page: () => const LoginScreen(),
     ),
     GetPage(
       name: homeRoute,
-      page: () =>  const HomeScreen(),
+      page: () => const HomeScreen(),
     ),
     GetPage(
       name: inscriptionRoute,
-      page: () =>  const InscriptionScreen(),
+      page: () => const InscriptionScreen(),
     ),
     GetPage(
       name: changeComiteRoute,
-      page: () =>  const ChangeComiteScreen(),
+      page: () => const ChangeComiteScreen(),
     ),
     GetPage(
       name: historiqueRoute,
-      page: () =>  const HistoriqueScreen(),
+      page: () => const HistoriqueScreen(),
     ),
 
-    GetPage(
-      name: evenementRoute,
-      page: () =>  const EvenementScreen(),
-    ),
+    // GetPage(
+    //   name: evenementRoute,
+    //   page: () =>  const EvenementScreen(),
+    // ),
     GetPage(
       name: compteRoute,
-      page: () =>  const CompteScreen(),
+      page: () => const CompteScreen(),
     ),
     GetPage(
       name: modifierMdpRoute,
-      page: () =>  const ModifierMdpScreen(),
+      page: () => const ModifierMdpScreen(),
     ),
-      ];
+  ];
 }
