@@ -52,6 +52,12 @@ class SectionTitle extends StatelessWidget {
   }
 }
 
+/// Affiche une date ISO (2026-01-26) au format français (26/01/2026).
+String _displayValue(String value) {
+  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})').firstMatch(value.trim());
+  return m == null ? value : '${m[3]}/${m[2]}/${m[1]}';
+}
+
 /// Ligne « libellé : valeur » qui s'adapte à la largeur disponible.
 class InfoRow extends StatelessWidget {
   const InfoRow(
@@ -78,10 +84,10 @@ class InfoRow extends StatelessWidget {
       child: LayoutBuilder(builder: (context, constraints) {
         final labelWidget = Text(label,
             style: const TextStyle(color: mutedTextColor, fontSize: 14));
-        final valueWidget = Text(value,
+        final valueWidget = Text(_displayValue(value),
             style: TextStyle(
-                color: valueColor ?? blueColor,
-                fontWeight: FontWeight.w600,
+                color: valueColor ?? titleTextColor,
+                fontWeight: FontWeight.w500,
                 fontSize: 15));
         // Sur écran très étroit, le libellé passe au-dessus de la valeur.
         if (constraints.maxWidth < 220) {
