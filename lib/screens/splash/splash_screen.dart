@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cherifla/controller/user.controller.dart';
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/screens/login/login.dart';
+import 'package:cherifla/services/app/init_service.dart';
 import 'package:cherifla/utils/loading/image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -26,6 +27,8 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(const Duration(seconds: 2), () async {
       var value = await _secureStorage.read(key: 'token');
       if (value != null) {
+        // Agent déjà connecté : on charge les listes dès le lancement
+        InitService().preloadEssentialData();
         Get.off(() => const HomeScreen());
       } else {
         Get.to(() => const LoginScreen());

@@ -1,8 +1,8 @@
 import 'package:cherifla/utils/color/color.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+/// Bouton secondaire (contour) avec une icône SVG.
 class IconButtonWidget extends StatelessWidget {
   const IconButtonWidget(
       {super.key,
@@ -29,41 +29,35 @@ class IconButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? displayWidth(context) * 0.5,
-      height: height ?? 60,
-      child: TextButton(
-        style: TextButton.styleFrom(foregroundColor: Colors.transparent),
+      width: width ?? double.infinity,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: colour ?? Colors.white,
+          foregroundColor: textColor ?? primaryColor,
+          minimumSize: Size(64, height ?? 52),
+          side: BorderSide(color: textColor ?? primaryColor, width: 1.5),
+          shape: border == null
+              ? null
+              : RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(border!)),
+          textStyle:
+              TextStyle(fontSize: size ?? 16, fontWeight: FontWeight.w600),
+        ),
         onPressed: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(border ?? 10),
-              color: colour ?? Colors.white),
-          child: Center(
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      displayHeight(context) * 0.02, 0, 0, 0),
-                  child: SvgPicture.asset(
-                    icon!,
-                    height: displayHeight(context) * 0.05,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      displayHeight(context) * 0.02, 0, 0, 0),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                        fontSize: size ?? displayWidth(context) * 0.05,
-                        letterSpacing: 1,
-                        color: textColor ?? Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              SvgPicture.asset(icon!, height: 24, width: 24),
+              const SizedBox(width: 12),
+            ],
+            Flexible(
+              child: Text(title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis),
             ),
-          ),
+          ],
         ),
       ),
     );

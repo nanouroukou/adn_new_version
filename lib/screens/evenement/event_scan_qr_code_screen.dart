@@ -27,7 +27,20 @@ class _EventScanQrCodeScreenState extends State<EventScanQrCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Zone de scan proportionnelle à l'écran, bornée entre 200 et 340 px
+    final size = MediaQuery.sizeOf(context);
+    final scanArea = (size.shortestSide * 0.7).clamp(200.0, 340.0).toDouble();
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text('Scanner le QR code'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          tooltip: 'Retour',
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -44,9 +57,23 @@ class _EventScanQrCodeScreenState extends State<EventScanQrCodeScreen> {
                   },
                 ),
                 QRScannerOverlay(
-                    scanAreaHeight: 240,
-                    scanAreaWidth: 240,
-                    overlayColor: Colors.black.withValues(alpha: 0.8)),
+                    scanAreaHeight: scanArea,
+                    scanAreaWidth: scanArea,
+                    overlayColor: Colors.black.withValues(alpha: 0.75)),
+                Positioned(
+                  left: 24,
+                  right: 24,
+                  bottom: 48,
+                  child: SafeArea(
+                    child: Text(
+                      'Placez le QR code dans le cadre',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 16),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

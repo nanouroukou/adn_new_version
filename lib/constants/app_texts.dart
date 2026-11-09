@@ -26,7 +26,7 @@ class Texts {
   static const String cancel = "Annuler";
   static const String validate = 'Valider';
   static const String signin = 'Se connecter';
-   static const String next = "Suivant";
+  static const String next = "Suivant";
 
   // Autres textes
   static const String forgotPassword = "Mot de passe oublié ?";

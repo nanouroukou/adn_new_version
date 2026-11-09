@@ -14,19 +14,19 @@ class User {
   String? registerAgent;
 
   User({
-     this.id,
-     this.createdAt,
-     this.updatedAt,
-     this.nom,
-     this.prenom,
-     this.phone,
-     this.dateNaissance,
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.nom,
+    this.prenom,
+    this.phone,
+    this.dateNaissance,
     this.prenomPere,
     this.prenomMere,
     this.nomMere,
-     this.login,
-     this.role,
-     this.registerAgent,
+    this.login,
+    this.role,
+    this.registerAgent,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {

@@ -52,8 +52,49 @@ class DropdownController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    init();
-    initType();
+    loadReferenceData();
+  }
+
+  /// Vrai pendant le chargement des listes (sexes, types de pièce, diplômes).
+  final referenceLoading = false.obs;
+  Future<void>? _referenceRequest;
+
+  bool get hasReferenceData =>
+      sexList.isNotEmpty && typeList.isNotEmpty && diplomeList.isNotEmpty;
+
+  /// Charge en une fois les listes utilisées par les formulaires.
+  /// Appelé au lancement (si l'agent est connecté), après la connexion
+  /// et à l'ouverture des formulaires. Ne refait pas l'appel si les listes
+  /// sont déjà là, et ne lance jamais deux chargements en même temps.
+  Future<void> loadReferenceData({bool force = false}) {
+    if (!force && hasReferenceData) return Future.value();
+    return _referenceRequest ??=
+        _fetchReferenceData().whenComplete(() => _referenceRequest = null);
+  }
+
+  Future<void> _fetchReferenceData() async {
+    referenceLoading.value = true;
+    try {
+      // Les trois appels partent en parallèle
+      final sexRequest = apiServices.getSex();
+      final typeRequest = apiServices.getIdentityType();
+      final diplomeRequest = apiServices.getDiplome();
+
+      final sexes = await sexRequest;
+      final types = await typeRequest;
+      final diplomes = await diplomeRequest;
+
+      if (sexes != null) sexList.assignAll(sexes);
+      if (types != null) typeList.assignAll(types);
+      if (diplomes != null) diplomeList.assignAll(diplomes);
+      logger().d(
+          'Listes chargées : ${sexList.length} sexes, ${typeList.length} types, ${diplomeList.length} diplômes');
+    } catch (e) {
+      logger().e(e.toString());
+    } finally {
+      referenceLoading.value = false;
+      update();
+    }
   }
 
   var selectedFederation = Rxn<RegionalFederation>(null);
@@ -76,32 +117,13 @@ class DropdownController extends GetxController {
   var newSelectedSubSection = Rxn<SubSection>();
   var newSelectedComity = Rxn<Comity>();
 
-  ///Initialise toutes les donnees necessaires du dropdown (Liste des federations). Obligatoire pour rendre fonctionnel
-  ///le dropdown.
+  ///Initialise les données des listes déroulantes.
   Future init() async {
-    try {
-      reset();
-      apiServices
-          .getIdentityType()
-          .then((value) => typeList.value = value ?? []);
-      apiServices.getDiplome().then((value) => diplomeList.value = value ?? []);
-      apiServices.getSex().then((value) => sexList.value = value ?? []);
-    } catch (e) {
-      logger().e(e.toString());
-    }
+    reset();
+    return loadReferenceData();
   }
 
-  Future initType() async {
-    try {
-      apiServices
-          .getIdentityType()
-          .then((value) => typeList.value = value ?? []);
-      apiServices.getDiplome().then((value) => diplomeList.value = value ?? []);
-      apiServices.getSex().then((value) => sexList.value = value ?? []);
-    } catch (e) {
-      logger().e(e.toString());
-    }
-  }
+  Future initType() => loadReferenceData();
 
   ///Definit les donnees initiales du dropdown. Prend en parametre un objet de type [Adherent].
   void setInitialData(Adherent adh) {
@@ -125,7 +147,7 @@ class DropdownController extends GetxController {
     dateAdhesionController.text = adh.adhesionDate.toString();
     professionController.text = adh.profession ?? "";
     codeCountry.value = adh.indicePays ?? "";
-    posteController.text = adh.profession ?? "";
+    posteController.text = adh.position ?? "";
     placeOfBirthdayController.text = adh.placeOfBirthday ?? "";
     nationalityController.text = adh.nationality ?? "";
     personToContactController.text = adh.personToContact ?? "";

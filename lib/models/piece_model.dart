@@ -2,14 +2,13 @@ import 'package:equatable/equatable.dart';
 
 import 'section_model.dart';
 
-class TypePiece extends Equatable{
+class TypePiece extends Equatable {
   int? id;
   String? name;
 
   TypePiece({
     this.id,
     this.name,
-
   });
 
   factory TypePiece.fromJson(Map<String, dynamic> json) {
@@ -19,7 +18,6 @@ class TypePiece extends Equatable{
     return TypePiece(
       id: json['id'],
       name: json['name'],
-
     );
   }
 
@@ -27,13 +25,11 @@ class TypePiece extends Equatable{
     return {
       'id': id,
       'name': name,
-
     };
   }
-  
-  
+
   @override
   // TODO: implement props
-  List<Object?> get props => [id,name]; // Utilise le même attribut pour le hash
+  List<Object?> get props =>
+      [id, name]; // Utilise le même attribut pour le hash
 }
-

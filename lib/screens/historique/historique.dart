@@ -1,14 +1,49 @@
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
 import 'package:cherifla/utils/log/logger.dart';
+import 'package:cherifla/utils/responsive/responsive.dart';
 import 'package:cherifla/widgets/appbar/app_bar.dart';
+import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/color/color.dart';
-import '../../widgets/background/background.dart';
+
+/// Une inscription, préparée pour l'affichage.
+class _Entry {
+  _Entry({
+    required this.name,
+    required this.code,
+    required this.place,
+    required this.date,
+  });
+
+  final String name;
+  final String code;
+  final String place;
+  final DateTime? date;
+
+  String get initials {
+    final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  bool matches(String q) {
+    final query = q.toLowerCase();
+    return name.toLowerCase().contains(query) ||
+        code.toLowerCase().contains(query) ||
+        place.toLowerCase().contains(query);
+  }
+}
+
+String _titleCase(String value) => value
+    .trim()
+    .split(RegExp(r'\s+'))
+    .where((w) => w.isNotEmpty)
+    .map((w) => w[0].toUpperCase() + w.substring(1).toLowerCase())
+    .join(' ');
 
 class HistoriqueScreen extends StatefulWidget {
   const HistoriqueScreen({super.key});
@@ -19,157 +54,245 @@ class HistoriqueScreen extends StatefulWidget {
 
 class _HistoriqueScreenState extends State<HistoriqueScreen> {
   final api = ApiServices();
-  List historique = [];
+  final _searchController = TextEditingController();
+  List<_Entry> _entries = [];
+  String _query = '';
   var _showLoading = true;
-  final f = new DateFormat('yyyy-MM-dd hh:mm');
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     api.getHistorique().then(
       (value) {
-        setState(() {
-          _showLoading = true;
-        });
+        if (!mounted) return;
         if (value != null) {
           setState(() {
-            historique = value;
+            _entries = value.map(_toEntry).toList()
+              ..sort((a, b) =>
+                  (b.date ?? DateTime(0)).compareTo(a.date ?? DateTime(0)));
           });
-          logger().d('length historique ${historique.length}');
+          logger().d('length historique ${_entries.length}');
         }
       },
-    ).whenComplete(() => setState(() {
+    ).whenComplete(() {
+      if (mounted) {
+        setState(() {
           _showLoading = false;
-        }));
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  _Entry _toEntry(dynamic item) {
+    final raw = item['adhesionDate'];
+    return _Entry(
+      name: _titleCase("${item['nom'] ?? ''} ${item['prenom'] ?? ''}"),
+      code: (item['codeAdherent'] ?? '-').toString(),
+      place: _titleCase((item['level6']?['name'] ?? '').toString()),
+      date: raw == null ? null : DateTime.tryParse(raw.toString()),
+    );
+  }
+
+  /// Regroupe les inscriptions par mois (« Janvier 2026 »).
+  Map<String, List<_Entry>> _groupByMonth(List<_Entry> entries) {
+    final groups = <String, List<_Entry>>{};
+    for (final e in entries) {
+      final key = e.date == null
+          ? 'Date inconnue'
+          : toBeginningOfSentenceCase(
+              DateFormat('MMMM yyyy', 'fr').format(e.date!));
+      groups.putIfAbsent(key, () => []).add(e);
+    }
+    return groups;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        canvasColor: redColor,
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: loginColor,
-            ),
-      ),
-      child: Scaffold(
-          appBar: buildAppBar(title: 'Historique'),
-          body: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              const Background(),
-              getBody(),
-              if (_showLoading) getLoader()
-            ],
-          )),
-    );
-  }
+    final filtered = _query.isEmpty
+        ? _entries
+        : _entries.where((e) => e.matches(_query)).toList();
+    final groups = _groupByMonth(filtered);
 
-  Widget getBody() {
-    return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: Get.width * 0.01, vertical: Get.width * 0.01),
-        child: ListView(physics: const ClampingScrollPhysics(), children: [
-          Gap(Get.height * 0.01),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.height * 0.015),
-            child: Text(
-              "Total : ${historique.length}",
-              style: TextStyle(
-                  fontFamily: 'Avenir Next LTPro',
-                  fontSize: Get.height * 0.025,
-                  fontWeight: FontWeight.normal,
-                  decoration: TextDecoration.none,
-                  color: Color(0xfff707070)),
-            ),
-          ),
-          Gap(Get.height * 0.01),
-          Column(
-            children: List.generate(historique.length, (index) {
-              //logger().d(historique[index]);
-
-              var item = historique[index];
-              // logger().d(item['comity']['region']);
-              var prenom = item['prenom'] ?? '';
-              var nom = item['nom'] ?? '';
-              var pays = item['comity']?['pays']?['nom'] ?? 'Pays';
-              // var pays =  'Mali';
-              var region = item['level6']['name'] ?? 'level';
-              var createdAt = DateFormat.yMd()
-                      .format(DateTime.parse(item['adhesionDate'])) ??
-                  'Date d\'adhesion';
-              var quarter = item['codeAdherent'] ?? 'Code ';
-              // var commune = item['comity']?['commune']?['nom'] ?? 'Commune';
-              var cerlce = item['comity']?['cercle']?['nom'] ?? 'Cercle';
-
-              return _buildHistItems(prenom, nom, pays, region, cerlce, quarter,
-                  createdAt.toString());
-            }),
-          )
-        ]));
-  }
-
-  Container _buildHistItems(
-      String prenom,
-      String nom,
-      String pays,
-      String region,
-      String cercle,
-      String quarter,
-      // String commune,
-      String createdAt) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: Get.width * 0.03, vertical: Get.height * 0.015),
-      padding: const EdgeInsets.all(2),
-      //color: Colors.white,
-      decoration: const BoxDecoration(
-          border:
-              Border(bottom: BorderSide(width: 0.15, color: Colors.black87))),
-      width: Get.width,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      backgroundColor: surfaceColor,
+      appBar: buildAppBar(title: 'Historique'),
+      body: Stack(
         children: [
-          SizedBox(
-            width: Get.width * 0.4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "$nom $prenom ",
-                  style: const TextStyle(
-                      color: primaryColor, fontWeight: FontWeight.bold),
+          ResponsiveCenter(
+            maxWidth: ContentWidth.content,
+            padding: EdgeInsets.zero,
+            child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                      context.pagePadding, 20, context.pagePadding, 0),
+                  sliver: SliverToBoxAdapter(child: _buildSummary()),
                 ),
-                Text(
-                  '$quarter',
-                  style: const TextStyle(
-                      color: redColor, fontWeight: FontWeight.bold),
-                )
+                if (_showLoading)
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                        context.pagePadding, 24, context.pagePadding, 0),
+                    sliver: const SliverToBoxAdapter(child: SkeletonList()),
+                  ),
+                if (!_showLoading && filtered.isEmpty)
+                  SliverToBoxAdapter(
+                    child: EmptyState(
+                      message: _query.isEmpty
+                          ? 'Aucune inscription pour le moment'
+                          : 'Aucun résultat pour « $_query »',
+                      icon: _query.isEmpty
+                          ? Icons.history_rounded
+                          : Icons.search_off_rounded,
+                    ),
+                  ),
+                for (final group in groups.entries)
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                        context.pagePadding, 24, context.pagePadding, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: _buildGroup(group.key, group.value),
+                    ),
+                  ),
+                const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             ),
           ),
-          SizedBox(
-            width: Get.width * 0.4,
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '$createdAt',
-                    style: const TextStyle(
-                        color: redColor, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    '$region',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        color: primaryColor, fontWeight: FontWeight.bold),
-                  )
-                ]),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummary() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_showLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: SkeletonBox(width: 160, height: 20),
           )
+        else
+          Text(
+            '${_entries.length} inscription${_entries.length > 1 ? 's' : ''}',
+            style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: titleTextColor),
+          ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _searchController,
+          onChanged: (v) => setState(() => _query = v.trim()),
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            hintText: 'Rechercher un nom, un code…',
+            prefixIcon: const Icon(Icons.search_rounded),
+            suffixIcon: _query.isEmpty
+                ? null
+                : IconButton(
+                    tooltip: 'Effacer',
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() => _query = '');
+                    },
+                  ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroup(String title, List<_Entry> entries) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: mutedTextColor,
+            ),
+          ),
+        ),
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor),
+          ),
+          child: Column(
+            children: [
+              for (var i = 0; i < entries.length; i++) ...[
+                _EntryRow(entry: entries[i]),
+                if (i < entries.length - 1)
+                  const Divider(height: 1, indent: 16, color: borderColor),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EntryRow extends StatelessWidget {
+  const _EntryRow({required this.entry});
+  final _Entry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final date = entry.date == null
+        ? ''
+        : DateFormat('d MMM yyyy', 'fr').format(entry.date!);
+
+    const muted = TextStyle(fontSize: 13, color: mutedTextColor);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.name.isEmpty ? 'Sans nom' : entry.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: titleTextColor),
+                ),
+                const SizedBox(height: 3),
+                Text(entry.code, style: muted),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(date, style: muted),
+              const SizedBox(height: 3),
+              Text(entry.place, style: muted),
+            ],
+          ),
         ],
       ),
     );

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'section_model.dart';
 
-class RegionalFederation extends Equatable{
+class RegionalFederation extends Equatable {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -19,7 +19,9 @@ class RegionalFederation extends Equatable{
 
   factory RegionalFederation.fromJson(Map<String, dynamic> json) {
     var sectionsFromJson = json['sections'] as List?;
-    List<Section>? sectionsList = sectionsFromJson?.map((sectionJson) => Section.fromJson(sectionJson)).toList();
+    List<Section>? sectionsList = sectionsFromJson
+        ?.map((sectionJson) => Section.fromJson(sectionJson))
+        .toList();
 
     return RegionalFederation(
       id: json['id'],
@@ -39,10 +41,8 @@ class RegionalFederation extends Equatable{
       'sections': sections?.map((section) => section.toJson()).toList(),
     };
   }
-  
-  
+
   @override
   // TODO: implement props
-  List<Object?> get props => [id,nom]; // Utilise le même attribut pour le hash
+  List<Object?> get props => [id, nom]; // Utilise le même attribut pour le hash
 }
-

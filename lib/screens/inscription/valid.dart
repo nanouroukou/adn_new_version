@@ -1,12 +1,12 @@
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/utils/color/color.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
+import 'package:cherifla/utils/responsive/responsive.dart';
+import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:cherifla/widgets/appbar/app_bar.dart';
 import 'package:cherifla/widgets/background/background.dart';
 import 'package:cherifla/widgets/button/buttonWidget.dart';
 import 'package:cherifla/widgets/button/iconButton.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,110 +38,67 @@ class _ValidationScreenState extends State<ValidationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        canvasColor: redColor,
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: primaryColor,
-            ),
+    return Scaffold(
+      appBar: buildAppBar(title: 'Inscription'),
+      body: Stack(
+        children: [const Background(), getBody()],
       ),
-      child: Scaffold(
-          appBar: buildAppBar(title: 'Inscription'),
-          body: Stack(
-            alignment: Alignment.topCenter,
-            children: [const Background(), getBody()],
-          )),
     );
   }
 
   Widget getBody() {
-    return Column(
-      children: [
-        // Gap(displayHeight(context) * 0.04),
-        // Text(
-        //   "la personne inscrite recevra ",
-        //   style: TextStyle(
-        //     color: loginColor,
-        //     fontWeight: FontWeight.bold,
-        //     fontSize: Get.height * 0.025,
-        //   ),
-        // ),
-        // Gap(displayHeight(context) * 0.005),
-        // Text(
-        //   "un message par SMS",
-        //   style: TextStyle(
-        //     color: loginColor,
-        //     fontWeight: FontWeight.bold,
-        //     fontSize: Get.height * 0.025,
-        //   ),
-        // ),
-        // Gap(displayHeight(context) * 0.005),
-        // Text(
-        //   "contenant son numéro Matricule ",
-        //   style: TextStyle(
-        //       color: loginColor,
-        //       fontWeight: FontWeight.bold,
-        //       fontSize: Get.height * 0.025),
-        // ),
-        Gap(displayHeight(context) * 0.04),
-        Container(
-          height: displayHeight(context) * 0.30,
-          width: displayWidth(context) * 0.50,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 2),
-              borderRadius:
-                  BorderRadius.circular(displayHeight(context) * 0.0015),
-              color: Colors.white),
-          child: apiServices.code.value != null
-              ? Image.network(
-                  apiServices.link.value,
-                  fit: BoxFit.fill,
-                )
-              : Icon(
-                  color: Colors.grey,
-                  Icons.person,
-                  size: Get.height * 0.025,
-                ),
-        ),
-        Gap(displayHeight(context) * 0.008),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return ResponsiveScrollView(
+      maxWidth: ContentWidth.form,
+      child: AppCard(
+        padding: EdgeInsets.all(context.responsive(20, tablet: 32)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Numéro Matricule: ",
-              style: TextStyle(
-                  color: loginColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: Get.height * 0.025),
+            const SectionTitle('Inscription enregistrée', center: true),
+            const SizedBox(height: 20),
+            PhotoPreview(
+              maxWidth: 220,
+              child: apiServices.link.value.isNotEmpty
+                  ? Image.network(
+                      apiServices.link.value,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Center(
+                        child: Icon(Icons.person_outline_rounded,
+                            size: 96, color: borderColor),
+                      ),
+                    )
+                  : null,
             ),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
+              "Numéro matricule",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: mutedTextColor, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            SelectableText(
               apiServices.code.value,
-              style: TextStyle(
+              textAlign: TextAlign.center,
+              style: const TextStyle(
                   color: loginColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: Get.height * 0.025),
+                  fontSize: 22,
+                  letterSpacing: 1),
+            ),
+            const SizedBox(height: 28),
+            IconButtonWidget(
+              icon: 'images/whatsapp.svg',
+              title: "Envoyer par WhatsApp",
+              onPressed: () => launchWhatsappWithMobileNumber(),
+            ),
+            const SizedBox(height: 12),
+            ButtonWidget(
+              title: "Retour au menu principal",
+              onPressed: () => Get.offAll(() => const HomeScreen()),
             ),
           ],
         ),
-        Gap(displayHeight(context) * 0.02),
-        IconButtonWidget(
-          width: Get.width * 18,
-          icon: 'images/whatsapp.svg',
-          title: "Envoyer par WhatsApp",
-          textColor: loginColor,
-          size: Get.height * 0.025,
-          colour: Colors.white,
-          onPressed: () => launchWhatsappWithMobileNumber(),
-        ),
-        Gap(displayHeight(context) * 0.005),
-        ButtonWidget(
-          width: Get.width * 18,
-          title: "Retour au Menu Principal",
-          size: Get.height * 0.025,
-          colour: loginColor,
-          onPressed: () => {Get.to(const HomeScreen())},
-        )
-      ],
+      ),
     );
   }
 }

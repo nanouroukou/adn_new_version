@@ -1,13 +1,13 @@
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/alert/alert.util.dart';
+import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
+import 'package:cherifla/utils/responsive/responsive.dart';
+import 'package:cherifla/widgets/appbar/app_bar.dart';
 import 'package:cherifla/widgets/background/background.dart';
+import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 
-import '../../utils/color/color.dart';
-import '../../utils/mediaQuery/size.dart';
 import '../../widgets/button/buttonWidget.dart';
 import '../../widgets/textField/textFieldWidget.dart';
 
@@ -22,8 +22,6 @@ class _ModifierMdpScreenState extends State<ModifierMdpScreen> {
   final _formkey = GlobalKey<FormState>();
   final apiServices = ApiServices();
   var showLoading = false;
-
-  //final _secureStorage = const FlutterSecureStorage();
 
   final TextEditingController oldPasswordController = TextEditingController();
 
@@ -54,134 +52,98 @@ class _ModifierMdpScreenState extends State<ModifierMdpScreen> {
           showLoading = false;
         });
       }
-
-      //var truePassword = await _secureStorage.read(key: 'userPassword');
     }
+  }
+
+  @override
+  void dispose() {
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: loginColor,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_outlined),
-            color: Colors.white,
-            onPressed: () {
-              Get.back();
-            },
-          ),
-        ),
-        body: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            const Background(),
-            getBody(context),
-            if (showLoading) getLoader()
-          ],
-        ));
-  }
-
-  Widget getBody(BuildContext context) {
-    const double titleSizeCoef = 0.05;
-    return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: displayWidth(context) * 0.01,
-            vertical: displayWidth(context) * 0.01),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Gap(displayHeight(context) * 0.02),
-              SizedBox(
-                width: displayWidth(context) * 06,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      appBar: buildAppBar(title: 'Mot de passe'),
+      body: Stack(
+        children: [
+          const Background(),
+          ResponsiveScrollView(
+            maxWidth: ContentWidth.form,
+            child: AppCard(
+              padding: EdgeInsets.all(context.responsive(20, tablet: 32)),
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      "Modification du mot de passe ",
-                      style: TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                          fontFamily: 'Avenir Next LTPro',
-                          fontSize: displayWidth(context) * titleSizeCoef,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.none,
-                          color: const Color(0xfff707070)),
+                    const Text('6 caractères minimum.',
+                        style: TextStyle(color: mutedTextColor, fontSize: 14)),
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      validator: (String? value) {
+                        if (value!.isEmpty || value.length < 6) {
+                          return 'Votre mot de passe doit comporter au minimum 6 caractères.';
+                        }
+                        return null;
+                      },
+                      prefix: const Icon(Icons.lock_outline),
+                      controller: oldPasswordController,
+                      obscure: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.next,
+                      onChanged: (value) {},
+                      hintText: 'Ancien mot de passe',
+                    ),
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      validator: (String? value) {
+                        if (value!.isEmpty) {
+                          return 'Votre mot de passe doit comporter au minimum 6 caractères.';
+                        }
+                        return null;
+                      },
+                      prefix: const Icon(Icons.lock_reset_outlined),
+                      controller: newPasswordController,
+                      obscure: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      textInputAction: TextInputAction.next,
+                      onChanged: (value) {},
+                      hintText: 'Nouveau mot de passe',
+                    ),
+                    const SizedBox(height: 16),
+                    TextFieldWidget(
+                      validator: (String? value) {
+                        if (value!.isEmpty) {
+                          return 'Votre mot de passe doit comporter au minimum 6 caractères.';
+                        }
+                        return null;
+                      },
+                      prefix: const Icon(Icons.lock_reset_outlined),
+                      controller: confirmNewPasswordController,
+                      obscure: true,
+                      keyboardType: TextInputType.visiblePassword,
+                      onChanged: (value) {},
+                      onFieldSubmitted: (_) =>
+                          showLoading ? null : onModifier(),
+                      hintText: 'Confirmer le nouveau mot de passe',
+                    ),
+                    const SizedBox(height: 28),
+                    ButtonWidget(
+                      title: 'Modifier',
+                      loading: showLoading,
+                      onPressed: () => showLoading ? null : onModifier(),
                     ),
                   ],
                 ),
               ),
-              Gap(displayHeight(context) * 0.01),
-              Padding(
-                  padding: EdgeInsets.all(displayWidth(context) * 0.05),
-                  child: Form(
-                    key: _formkey,
-                    child: Container(
-                      color: Colors.transparent,
-                      padding: EdgeInsets.fromLTRB(
-                          displayWidth(context) * 0.09,
-                          displayHeight(context) * 0.03,
-                          displayWidth(context) * 0.09,
-                          displayHeight(context) * 0.05),
-                      child: Column(children: [
-                        Gap(displayHeight(context) * 0.04),
-                        TextFieldWidget(
-                          validator: (String? value) {
-                            if (value!.isEmpty || value.length < 6) {
-                              return 'Votre mot de passe doit comporter au minimum 6 caractères.';
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: oldPasswordController,
-                          obscure: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          onChanged: (value) {},
-                          hintText: 'Ancien Mot De Passe',
-                          inputFormatters: const [],
-                        ),
-                        Gap(displayHeight(context) * 0.04),
-                        TextFieldWidget(
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Votre mot de passe doit comporter au minimum 6 caractères.';
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: newPasswordController,
-                          obscure: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          onChanged: (value) {},
-                          hintText: 'Nouveau Mot de  passe',
-                          inputFormatters: const [],
-                        ),
-                        Gap(displayHeight(context) * 0.04),
-                        TextFieldWidget(
-                          validator: (String? value) {
-                            if (value!.isEmpty) {
-                              return 'Votre mot de passe doit comporter au minimum 6 caractères.';
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: confirmNewPasswordController,
-                          obscure: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          onChanged: (value) {},
-                          hintText: ' Confirmer nouveau Mot de  passe',
-                          inputFormatters: const [],
-                        ),
-                        Gap(displayHeight(context) * 0.04),
-                        ButtonWidget(
-                          title: 'Modifier',
-                          colour: loginColor,
-                          onPressed: () => showLoading ? null : onModifier(),
-                        )
-                      ]),
-                    ),
-                  ))
-            ],
+            ),
           ),
-        ));
+          if (showLoading) getLoader()
+        ],
+      ),
+    );
   }
 }

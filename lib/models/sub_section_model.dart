@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'comity_model.dart';
 
-class SubSection extends Equatable{
+class SubSection extends Equatable {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -19,7 +19,9 @@ class SubSection extends Equatable{
 
   factory SubSection.fromJson(Map<String, dynamic> json) {
     var comitiesFromJson = json['comities'] as List?;
-    List<Comity>? comitiesList = comitiesFromJson?.map((comityJson) => Comity.fromJson(comityJson)).toList();
+    List<Comity>? comitiesList = comitiesFromJson
+        ?.map((comityJson) => Comity.fromJson(comityJson))
+        .toList();
 
     return SubSection(
       id: json['id'],
@@ -39,8 +41,7 @@ class SubSection extends Equatable{
       'comities': comities?.map((comity) => comity.toJson()).toList(),
     };
   }
-  
+
   @override
-  
-  List<Object?> get props => [nom]; 
+  List<Object?> get props => [nom];
 }

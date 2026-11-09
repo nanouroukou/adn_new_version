@@ -4,13 +4,13 @@ import 'package:cherifla/services/authentification/auth.service.dart';
 import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/loading/image.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
+import 'package:cherifla/utils/responsive/responsive.dart';
 import 'package:cherifla/widgets/background/background.dart';
 import 'package:cherifla/widgets/button/buttonWidget.dart';
+import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:cherifla/widgets/textField/textFieldWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -48,184 +48,133 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _onSubmit() {
+    if (_showLoading) return;
+    if (_loginFormKey.currentState!.validate()) {
+      setState(() {
+        _showLoading = true;
+      });
+      checkFeign();
+      authService
+          .signin(loginController.value.text, passwordController.value.text)
+          .then(
+            (value) => setState(() {
+              _showLoading = false;
+            }),
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Background(),
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                    height: Get.height * 0.25,
-                    width: Get.width * 0.9,
-                    margin: EdgeInsets.only(
-                        top: Get.height * 0.02, bottom: Get.height * 0.075),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        top: Get.height * 0.025,
-                      ),
-                      child: Image.asset(
-                        logo,
-                        fit: BoxFit.contain,
-                        width: Get.height * 0.15,
-                      ),
-                    )),
-              ),
-              Padding(
-                  padding: EdgeInsets.only(bottom: Get.width * 0.05),
-                  child: Card(
-                    elevation: Get.height * 0.01,
-                    color: const Color(0xFFFFFFFF),
-                    child: Form(
-                      key: _loginFormKey,
-                      child: Container(
-                        width: Get.width * 0.95,
-                        color: Colors.transparent,
-                        padding: EdgeInsets.fromLTRB(
-                            Get.width * 0.07,
-                            Get.width * 0.03,
-                            Get.width * 0.09,
-                            Get.height * 0.05),
-                        child: Column(children: [
-                          SizedBox(
-                            height: Get.height * 0.03,
-                          ),
-                          TextFieldWidget(
-                            validator: (String? value) {
-                              if (value!.isEmpty) {
-                                return '';
-                              } else {
+    final logoHeight =
+        (context.screenHeight * 0.18).clamp(90.0, 170.0).toDouble();
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          const Background(),
+          SafeArea(
+            child: Center(
+              child: ResponsiveScrollView(
+                maxWidth: ContentWidth.form,
+                child: Column(
+                  children: [
+                    Image.asset(logo, height: logoHeight, fit: BoxFit.contain),
+                    const SizedBox(height: 24),
+                    AppCard(
+                      padding:
+                          EdgeInsets.all(context.responsive(20, tablet: 32)),
+                      child: Form(
+                        key: _loginFormKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SectionTitle(Texts.login),
+                            const SizedBox(height: 20),
+                            TextFieldWidget(
+                              validator: (String? value) {
+                                if (value!.isEmpty) {
+                                  return 'Saisissez votre login';
+                                }
                                 return null;
-                              }
-                            },
-                            textColor: primaryColor,
-                            fillColor: greyColor,
-                            hintColor: Colors.black,
-                            prefix: const Icon(
-                              Icons.person,
-                              color: loginColor,
+                              },
+                              prefix: const Icon(Icons.person_outline),
+                              controller: loginController,
+                              obscure: false,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (value) {},
+                              hintText: 'Login',
                             ),
-                            controller: loginController,
-                            obscure: false,
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {},
-                            hintText: 'Login',
-                            inputFormatters: const [
-                              // TestMaskFormatter(
-                              //   mask: 'xx xx xx xx',
-                              //   separator: ' ',
-                              // ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: Get.height * 0.04,
-                          ),
-                          TextFieldWidget(
-                            textColor: primaryColor,
-                            validator: (String? value) {
-                              if (value!.isEmpty) {
-                                return 'Saisissez votre mot de passe';
-                              } else {
+                            const SizedBox(height: 16),
+                            TextFieldWidget(
+                              validator: (String? value) {
+                                if (value!.isEmpty) {
+                                  return 'Saisissez votre mot de passe';
+                                }
                                 return null;
-                              }
-                            },
-                            prefix: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                  0, 0, Get.height * 0.004, 0),
-                              child: const Icon(
-                                Icons.lock,
-                                color: loginColor,
+                              },
+                              prefix: const Icon(Icons.lock_outline),
+                              controller: passwordController,
+                              obscure: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              onChanged: (value) {},
+                              onFieldSubmitted: (_) => _onSubmit(),
+                              hintText: 'Mot de passe',
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () =>
+                                    Get.to(() => const ForgetPawssordScreen()),
+                                child: const Text(Texts.forgotPassword),
                               ),
                             ),
-                            fillColor: greyColor,
-                            hintColor: Colors.black,
-                            controller: passwordController,
-                            obscure: true,
-                            keyboardType: TextInputType.visiblePassword,
-                            onChanged: (value) {},
-                            hintText: 'Mot de  passe',
-                            inputFormatters: const [],
-                          ),
-                          // Gap(Get.height * 0.04),
-
-                          Visibility(
-                            visible: visible,
-                            child: InkWell(
-                              onTap: () async {
-                                setState(() {
-                                  _showLoading = true;
-                                });
-                                authService
-                                    .useBiometric()
-                                    .then(
-                                      (value) => setState(() {
-                                        _showLoading = false;
-                                      }),
-                                    )
-                                    .whenComplete(
-                                      () => setState(() {
-                                        _showLoading = false;
-                                      }),
-                                    );
-                              },
-                              child: Padding(
-                                padding:
-                                    EdgeInsets.only(top: Get.height * 0.035),
-                                child: const Icon(
-                                  Icons.fingerprint,
+                            if (visible)
+                              Center(
+                                child: IconButton(
+                                  iconSize: 48,
                                   color: loginColor,
-                                  size: 50,
+                                  tooltip: 'Connexion biométrique',
+                                  icon: const Icon(Icons.fingerprint),
+                                  onPressed: () async {
+                                    setState(() {
+                                      _showLoading = true;
+                                    });
+                                    authService
+                                        .useBiometric()
+                                        .then(
+                                          (value) => setState(() {
+                                            _showLoading = false;
+                                          }),
+                                        )
+                                        .whenComplete(
+                                          () => setState(() {
+                                            _showLoading = false;
+                                          }),
+                                        );
+                                  },
                                 ),
                               ),
+                            const SizedBox(height: 8),
+                            ButtonWidget(
+                              title: Texts.signin,
+                              loading: _showLoading,
+                              onPressed: _onSubmit,
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () =>
-                                      {Get.to(ForgetPawssordScreen())},
-                                  child: Text("Mot de passe oublier"))
-                            ],
-                          ),
-                          // SizedBox(
-                          //   height: Get.height * 0.04,
-                          // ),
-                          ButtonWidget(
-                            title: Texts.signin,
-                            colour: loginColor,
-                            onPressed: () => _showLoading
-                                ? null
-                                : {
-                                    if (_loginFormKey.currentState!.validate())
-                                      {
-                                        setState(() {
-                                          _showLoading = true;
-                                        }),
-                                        checkFeign(),
-                                        authService
-                                            .signin(loginController.value.text,
-                                                passwordController.value.text)
-                                            .then(
-                                              (value) => setState(() {
-                                                _showLoading = false;
-                                              }),
-                                            )
-                                        // Get.to(const HomeScreen())
-                                      }
-                                  },
-                          )
-                        ]),
+                          ],
+                        ),
                       ),
                     ),
-                  )),
-            ],
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        if (_showLoading) getLoader()
-      ],
+          if (_showLoading) getLoader()
+        ],
+      ),
     );
   }
 }

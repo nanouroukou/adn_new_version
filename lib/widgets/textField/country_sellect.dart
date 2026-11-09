@@ -1,8 +1,7 @@
 import 'package:cherifla/utils/color/color.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
+import 'package:cherifla/widgets/textField/textFieldWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 
 class CountryTextFieldWidget extends StatelessWidget {
   final FormFieldValidator<String>? validator;
@@ -53,57 +52,27 @@ class CountryTextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextFormField(
-            onTap: () => ontap(),
-            controller: controller,
-            readOnly: read ?? false,
-            showCursor: show,
-
-            style: TextStyle(
-                color: textColor ?? Colors.white,
-                fontSize: displayWidth(context) * 0.04,
-                fontWeight: FontWeight.normal),
-            // textAlign: TextAlign.center,
-            obscureText: obscure,
-            keyboardType: keyboardType,
-            decoration: InputDecoration(
-                focusedBorder: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    borderSide: BorderSide(color: loginColor)),
-                suffixIcon: suffix,
-                prefixIcon: prefix,
-                hintText: hintText,
-                errorStyle: const TextStyle(color: redColor),
-                errorMaxLines: 2,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                hintStyle: TextStyle(
-                  fontSize: size ?? displayWidth(context) * 0.04,
-                  fontWeight: FontWeight.normal,
-                  color: hintColor ?? Colors.white,
-                ),
-                filled: true,
-                fillColor: fillColor ?? primaryColorLight,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: boderWidth ?? 2,
-                        color: borderColor ?? loginColor),
-                    borderRadius: BorderRadius.circular(5)),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        width: boderWidth ?? 0,
-                        color: borderColor ?? loginColor),
-                    borderRadius: BorderRadius.circular(15))),
-            textInputAction: textInputAction ?? TextInputAction.done,
-            inputFormatters: inputFormatters,
-          ),
-        ],
+    return TextFormField(
+      onTap: () => ontap(),
+      controller: controller,
+      readOnly: read ?? true,
+      showCursor: show ?? false,
+      style: TextStyle(color: textColor ?? titleTextColor, fontSize: 16),
+      obscureText: obscure,
+      keyboardType: keyboardType,
+      decoration: appInputDecoration(
+        hintText: hintText,
+        prefix: prefix ?? const Icon(Icons.flag_outlined),
+        suffix: suffix ?? const Icon(Icons.arrow_drop_down),
+        fillColor: fillColor,
+        hintColor: hintColor,
+        hintSize: size,
+        borderColor: borderColor,
+        borderWidth: boderWidth,
       ),
+      validator: validator,
+      textInputAction: textInputAction ?? TextInputAction.done,
+      inputFormatters: inputFormatters,
     );
   }
 }

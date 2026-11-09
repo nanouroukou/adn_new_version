@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cherifla/screens/home/homeScreen.dart';
 import 'package:cherifla/screens/login/login.dart';

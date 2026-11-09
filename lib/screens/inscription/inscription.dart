@@ -4,33 +4,26 @@ import 'dart:math';
 import 'package:cherifla/controller/dropdown_controller.dart';
 import 'package:cherifla/controller/user.controller.dart';
 import 'package:cherifla/models/adherent_creation.dart';
-import 'package:cherifla/models/adherent_model.dart';
-import 'package:cherifla/models/comity_model.dart';
 import 'package:cherifla/models/dipole.dart';
-import 'package:cherifla/models/federation_model.dart';
 import 'package:cherifla/models/piece_model.dart';
-import 'package:cherifla/models/section_model.dart';
-import 'package:cherifla/models/sub_section_model.dart';
 import 'package:cherifla/services/api/api.services.dart';
+import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/format/date.dart';
 
 import 'package:cherifla/utils/format/textFormater.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
-import 'package:cherifla/widgets/background/background.dart';
+import 'package:cherifla/widgets/common/responsive_stepper.dart';
 import 'package:cherifla/widgets/textField/country_sellect.dart';
+import 'package:cherifla/widgets/textField/app_dropdown.dart';
 import 'package:cherifla/widgets/textField/numberPhone.dart';
 import 'package:cherifla/widgets/textField/textFieldWidget.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../utils/log/logger.dart';
 import '../../widgets/appbar/app_bar.dart';
@@ -77,8 +70,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
   var imageFileProfile;
   var imageFileIdentity;
-  final double imageHeight = Get.height * 2.30;
-  final double imageWidth = Get.height * 2.10;
   bool isCompleted = false;
 
   DateFormat formatter = DateFormat("yyyy-mm-dd");
@@ -104,13 +95,17 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       setState(() {
         currentStep += 1;
       });
-      _scrollController.jumpTo(0);
+      if (_scrollController.hasClients) _scrollController.jumpTo(0);
     } else if (formKey[currentStep].currentState!.validate() &&
         currentStep == (getSteps().length - 1) &&
         imageFileProfile != null) {
       //ENVOI DU FORMULAIRE
       logger().i('last step valid');
       _onSave();
+    } else if (currentStep == (getSteps().length - 1) &&
+        imageFileProfile == null) {
+      Alert.showInfoDialog(
+          'Prenez la photo de la personne avant d\'enregistrer.');
     } else {
       logger().e("current form not valid");
     }
@@ -123,7 +118,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       setState(() {
         currentStep -= 1;
       });
-      _scrollController.jumpTo(0);
+      if (_scrollController.hasClients) _scrollController.jumpTo(0);
     }
   }
 
@@ -144,7 +139,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       prenomPere: prenomPereController.value.text,
       prenomMere: prenomMereController.value.text,
       nomMere: nomMereController.value.text,
-      nomPere: nomMereController.value.text,
+      nomPere: nomPereController.value.text,
       sexe: dropdownController.selectedSexRegister.value,
       nationality: nationalityPereController.value.text,
       placeOfBirthday: placeOfBirthdayController.value.text,
@@ -156,13 +151,13 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       identityCardNumber: identityCardNumberController.value.text,
     );
 
-    imageFileIdentity.toString().isEmpty
+    imageFileIdentity == null
         ? apiServices
             .inscrireAdherentWithoutImage(file: imageFileProfile, body: adh)
             .then(
             (value) {
               setState(() {
-                _showLoading == false;
+                _showLoading = false;
               });
             },
           ).whenComplete(
@@ -178,7 +173,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
             .then(
             (value) {
               setState(() {
-                _showLoading == false;
+                _showLoading = false;
               });
             },
           ).whenComplete(
@@ -254,681 +249,372 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        canvasColor: redColor,
-        colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: primaryColor,
-            ),
-      ),
-      child: Scaffold(
-          appBar: buildAppBar(title: 'Inscription'),
-          body: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              const Background(),
-              getBody(),
-              if (_showLoading) getLoader()
-            ],
-          )),
-    );
-  }
-
-  Widget getBody() {
-    return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: Get.width * 0.01, vertical: Get.width * 0.01),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          physics: const ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              Gap(Get.height * 0.01),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Center(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: Get.height * 0.9,
-                          width: Get.width * 06,
-                          child: Stepper(
-                            physics: const BouncingScrollPhysics(),
-                            steps: getSteps(),
-                            onStepContinue: () => _onContinue(),
-                            onStepCancel: () => _onCancel(),
-                            controlsBuilder: (BuildContext context,
-                                ControlsDetails details) {
-                              return Row(
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                          ),
-                                        ),
-                                        onPressed: _showLoading
-                                            ? null
-                                            : details.onStepCancel,
-                                        child: Text(
-                                          'Precedent',
-                                          style: TextStyle(
-                                              fontSize: Get.height * 0.020),
-                                        )),
-                                  ),
-                                  Gap(Get.width * 0.1),
-                                  Expanded(
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                          ),
-                                        ),
-                                        onPressed: _showLoading
-                                            ? null
-                                            : details.onStepContinue,
-                                        child:
-                                            currentStep == getSteps().length - 1
-                                                ? Text(
-                                                    'Enregistrer',
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            Get.height * 0.020),
-                                                  )
-                                                : Text(
-                                                    'Suivant',
-                                                    style: TextStyle(
-                                                        fontSize:
-                                                            Get.height * 0.020),
-                                                  )),
-                                  ),
-                                ],
-                              );
-                            },
-                            type: StepperType.horizontal,
-                            currentStep: currentStep,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
-  }
-
-  List<Step> getSteps() => [
-        //----  STEP 1 -------//
-        Step(
-            title: Text(''),
-            state: currentStep > 0 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 0,
-            content: Form(
-              key: formKey[0],
-              child: Column(
-                children: [
-                  TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Nom obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: nomController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nom',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Prénom obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: prenomController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Prénom(s)',
-                  ),
-                  _buildSexDw(),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value == '') {
-                        return 'Selectionnez la date de naissance';
-                      } else if (value.length < 10) {
-                        return 'Format invalide';
-                      } else {
-                        return null;
-                      }
-                    },
-                    keyboardType: TextInputType.datetime,
-                    inputFormatters: [
-                      TestMaskFormatter(mask: 'xx-xx-xxxx', separator: '-')
-                    ],
-                    style: TextStyle(
-                        color: Colors.white, fontSize: Get.width * 0.04),
-                    controller: dateNaissanceController,
-                    decoration: InputDecoration(
-                        prefixIcon: InkWell(
-                          onTap: () async {
-                            var pickedDate = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime(1900),
-                                lastDate: DateTime.now());
-                            if (pickedDate != null) {
-                              dateNaissanceController.text =
-                                  DateFormat('dd-MM-yyyy').format(pickedDate);
-                              setState(() {
-                                dateNaissanceValue =
-                                    DateFormat('yyyy-MM-dd').format(pickedDate);
-                              });
-                            }
-                          },
-                          child: const Icon(
-                            Icons.calendar_month,
-                            color: Colors.white,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 10),
-                        hintText: "Date de naissance ",
-                        focusedBorder: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: primaryColor)),
-                        errorStyle: const TextStyle(color: redColor),
-                        hintStyle: TextStyle(
-                          fontSize: Get.width * 0.04,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                        ),
-                        filled: true,
-                        fillColor: primaryColorLight,
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 2, color: primaryColor),
-                            borderRadius: BorderRadius.circular(5)),
-                        border: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 0, color: primaryColor),
-                            borderRadius: BorderRadius.circular(15))),
-                    onFieldSubmitted: (newValue) async {
-                      setState(() {
-                        dateNaissanceValue = DateFormat('yyyy-mm-dd')
-                            .format(parseFrDate(newValue));
-                      });
-                    },
-                    onTap: () {
-                      dateNaissanceController.clear();
-                    },
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    controller: placeOfBirthdayController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Lieu de Naissance',
-                  ),
-                  Gap(Get.height * 0.03),
-                ],
-              ),
-            )),
-
-        //----  STEP 2 -------//
-        Step(
-            title: const Text(''),
-            state: currentStep > 1 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 1,
-            content: Form(
-              key: formKey[1],
-              child: Column(
-                children: [
-                  NumberTextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Numero de telephone obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: phoneNumberController,
-                    obscure: false,
-                    keyboardType: TextInputType.phone,
-                    onChanged: (value) {},
-                    onChangeCountry: (value) {
-                      indicePaysController.text = value;
-                      print(value);
-                    },
-                    hintText: 'Numéro de telephone',
-                  ),
-                  TextFieldWidget(
-                    controller: prenomPereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Prénom(s) du père',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    controller: nomPereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nom du père',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    controller: prenomMereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Prénom(s) de la mère',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    controller: nomMereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nom de la mère',
-                  ),
-                  _buildTypePieceDw(),
-                  TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'numero de la piece d\'identite obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: identityCardNumberController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'numero de la piece d\'identite',
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.03,
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.03,
-                  ),
-                ],
-              ),
-            )),
-
-        //----  STEP 3 -------//
-        Step(
-            title: const Text(''),
-            state: currentStep > 2 ? StepState.complete : StepState.indexed,
-            isActive: currentStep >= 2,
-            content: Form(
-              key: formKey[2],
-              child: Column(
-                children: [
-                  CountryTextFieldWidget(
-                    ontap: () => {
-                      showCountryPicker(
-                          context: context,
-                          onSelect: (Country country) {
-                            setState(() {
-                              nationalityPereController.text = country.name;
-                            });
-                          })
-                    },
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'La nationalité obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: nationalityPereController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Nationalité',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    validator: (String? value) {
-                      if (value!.isEmpty) {
-                        return 'Profession obligatoire';
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: professionController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Profession',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFieldWidget(
-                    controller: posteController,
-                    obscure: false,
-                    keyboardType: TextInputType.name,
-                    onChanged: (value) {},
-                    hintText: 'Poste Occupé',
-                  ),
-                  _buildDipDw(),
-                  TextFieldWidget(
-                    controller: personToContactController,
-                    obscure: false,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {},
-                    hintText: 'Numero de la personne à contacter',
-                  ),
-                  Gap(Get.height * 0.03),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Selectionnez une date';
-                      }
-                      return null;
-                    },
-                    controller: dateAdhesionController,
-                    keyboardType: TextInputType.datetime,
-                    inputFormatters: [
-                      TestMaskFormatter(mask: 'xx-xx-xxxx', separator: '-')
-                    ],
-                    onTap: () {
-                      dateAdhesionController.clear();
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                        prefixIconColor: Colors.white,
-                        prefixIcon: InkWell(
-                            onTap: () async {
-                              var pickedDate = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime(1900),
-                                  lastDate: DateTime.now());
-                              if (pickedDate != null) {
-                                setState(() {
-                                  dateAdhesionController.text =
-                                      DateFormat('dd-MM-yyyy')
-                                          .format(pickedDate);
-                                  dateAdhesion = DateFormat('yyyy-MM-dd')
-                                      .format(pickedDate);
-                                });
-                              }
-                            },
-                            child: const Icon(Icons.calendar_month)),
-                        hintText: "Date d'adhésion (dd-mm-yyyy) ",
-                        focusedBorder: const OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: primaryColor)),
-                        errorStyle: const TextStyle(color: textColor),
-                        hintStyle: TextStyle(
-                          fontSize: Get.width * 0.03,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
-                        ),
-                        filled: true,
-                        fillColor: primaryColorLight,
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                width: Get.width * 0.005, color: primaryColor),
-                            borderRadius: BorderRadius.circular(5)),
-                        border: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 0, color: primaryColor),
-                            borderRadius: BorderRadius.circular(15))),
-                  ),
-                  Gap(Get.height * 0.03),
-                ],
-              ),
-            )),
-
-        //----  STEP 4 -------//
-        Step(
-          state: currentStep > 3 ? StepState.complete : StepState.indexed,
-          isActive: currentStep >= 3,
-          title: const Text(''),
-          content: Form(
-            key: formKey[3],
-            child: Column(
-              children: [
-                SizedBox(
-                    height: Get.height * 0.06,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: () {
-                        pickImageIdentityFromCamera();
-                      },
-                      label: Text("Prendre une photo de la piece à d'identite",
-                          style: TextStyle(fontSize: Get.height * 0.020)),
-                    )),
-                Gap(Get.height * 0.04),
-                Container(
-                  height: Get.height * 0.3,
-                  width: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2),
-                      borderRadius: BorderRadius.circular(18),
-                      color: Colors.white),
-                  child: imageFileIdentity != null
-                      ? Image.file(imageFileIdentity!)
-                      : Icon(
-                          color: Colors.grey,
-                          Icons.person,
-                          size: Get.height * 0.25,
-                        ),
-                ),
-                Gap(Get.height * 0.04),
-                Gap(Get.height * 0.04),
-              ],
-            ),
-          ),
-        ),
-
-        //----  STEP 5 -------//
-        Step(
-          state: currentStep > 4 ? StepState.complete : StepState.indexed,
-          isActive: currentStep >= 4,
-          title: const Text(''),
-          content: Form(
-            key: formKey[4],
-            child: Column(
-              children: [
-                SizedBox(
-                    height: Get.height * 0.06,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: () {
-                        pickImageProfileFromCamera();
-                      },
-                      label: Text("Prendre une photo de la personne à inscrire",
-                          style: TextStyle(fontSize: Get.height * 0.020)),
-                    )),
-                Gap(Get.height * 0.04),
-                Container(
-                  height: Get.height * 0.3,
-                  width: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2),
-                      borderRadius: BorderRadius.circular(18),
-                      color: Colors.white),
-                  child: imageFileProfile != null
-                      ? Image.file(imageFileProfile!)
-                      : Icon(
-                          color: Colors.grey,
-                          Icons.person,
-                          size: Get.height * 0.25,
-                        ),
-                ),
-                Gap(Get.height * 0.04),
-              ],
-            ),
-          ),
-        )
-      ];
-
-  Widget _buildHeader() {
-    const double titleSizeCoef = 0.08;
-    const double iconTitleSizeCoef = 0.06;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: Get.width * 0.06),
-      child: Column(
+    return Scaffold(
+      backgroundColor: surfaceColor,
+      appBar: buildAppBar(title: 'Inscription'),
+      body: Stack(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                'images/inscription.svg',
-                height: Get.height * iconTitleSizeCoef,
-                color: Colors.black,
-              ),
-              SizedBox(
-                width: Get.width * 0.05,
-              ),
-              Text(
-                "Inscription",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontFamily: 'Avenir Next LTPro',
-                    fontSize: Get.width * titleSizeCoef,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.none,
-                    color: const Color(0xfff707070)),
-              ),
-            ],
+          ResponsiveStepper(
+            steps: getSteps(),
+            currentStep: currentStep,
+            scrollController: _scrollController,
+            loading: _showLoading,
+            lastStepLabel: 'Enregistrer',
+            onContinue: () => _onContinue(),
+            onCancel: () => _onCancel(),
           ),
-          SizedBox(height: Get.height * 0.02),
+          if (_showLoading) getLoader()
         ],
       ),
     );
   }
 
-  InputDecoration dropdownDecoration() {
-    return InputDecoration(
-        focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderSide: BorderSide(color: primaryColor)),
-        errorStyle: const TextStyle(color: textColor),
-        hintStyle: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.normal,
-          color: Colors.white,
+  static const _fieldGap = SizedBox(height: 16);
+
+  /// Champ date (saisie au clavier jj-mm-aaaa ou via le calendrier).
+  Widget _dateField({
+    required TextEditingController controller,
+    required String hint,
+    required FormFieldValidator<String> validator,
+    required ValueChanged<DateTime> onPicked,
+    ValueChanged<String>? onFieldSubmitted,
+  }) {
+    return TextFormField(
+      validator: validator,
+      keyboardType: TextInputType.datetime,
+      inputFormatters: [TestMaskFormatter(mask: 'xx-xx-xxxx', separator: '-')],
+      style: const TextStyle(color: titleTextColor, fontSize: 16),
+      controller: controller,
+      decoration: appInputDecoration(
+        hintText: hint,
+        prefix: IconButton(
+          tooltip: 'Ouvrir le calendrier',
+          icon: const Icon(Icons.calendar_month_outlined),
+          onPressed: () async {
+            var pickedDate = await showDatePicker(
+                context: context,
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now());
+            if (pickedDate != null) onPicked(pickedDate);
+          },
         ),
-        filled: true,
-        fillColor: primaryColorLight,
-        enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(width: 2, color: primaryColor),
-            borderRadius: BorderRadius.circular(5)),
-        border: OutlineInputBorder(
-            borderSide: const BorderSide(width: 0, color: primaryColor),
-            borderRadius: BorderRadius.circular(15)));
+      ),
+      onFieldSubmitted: onFieldSubmitted,
+      onTap: () => controller.clear(),
+    );
   }
 
-  _buildTypePieceDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) => DropdownButtonFormField<TypePiece>(
-              value: dropdownController.selectedTypeRegister.value,
-              disabledHint: const Text(
-                'Type de piece non disponible',
-                style: TextStyle(color: Colors.white),
-              ),
-              hint: const Text('Selectionnez le type de piece',
-                  style: TextStyle(color: Colors.white)),
-              decoration: dropdownDecoration(),
-              dropdownColor: primaryColor,
-              items: dropdownController.typeList.isEmpty
-                  ? []
-                  : dropdownController.typeList.map((v) {
-                      return DropdownMenuItem<TypePiece>(
-                          value: v,
-                          key: UniqueKey(),
-                          child: Text(
-                            v.name ?? '',
-                            style: const TextStyle(color: Colors.white),
-                          ));
-                    }).toList(),
-              onChanged: (value) {
-                dropdownController.onSelectType(value!);
-              }),
+  List<FormStep> getSteps() => [
+        //----  STEP 1 -------//
+        FormStep(
+          title: 'Identité',
+          content: Form(
+            key: formKey[0],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Nom obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: nomController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Nom',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Prénom obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: prenomController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Prénom(s)',
+                ),
+                _fieldGap,
+                _buildSexDw(),
+                _fieldGap,
+                _dateField(
+                  controller: dateNaissanceController,
+                  hint: 'Date de naissance (jj-mm-aaaa)',
+                  validator: (value) {
+                    if (value == null || value == '') {
+                      return 'Selectionnez la date de naissance';
+                    } else if (value.length < 10) {
+                      return 'Format invalide';
+                    }
+                    return null;
+                  },
+                  onPicked: (pickedDate) {
+                    dateNaissanceController.text =
+                        DateFormat('dd-MM-yyyy').format(pickedDate);
+                    setState(() {
+                      dateNaissanceValue =
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                    });
+                  },
+                  onFieldSubmitted: (newValue) async {
+                    setState(() {
+                      dateNaissanceValue = DateFormat('yyyy-mm-dd')
+                          .format(parseFrDate(newValue));
+                    });
+                  },
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: placeOfBirthdayController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Lieu de naissance',
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //----  STEP 2 -------//
+        FormStep(
+          title: 'Contact et famille',
+          content: Form(
+            key: formKey[1],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                NumberTextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Numero de telephone obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: phoneNumberController,
+                  obscure: false,
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {},
+                  onChangeCountry: (value) {
+                    indicePaysController.text = value;
+                  },
+                  hintText: 'Numéro de téléphone',
+                ),
+                const SizedBox(height: 4),
+                TextFieldWidget(
+                  controller: prenomPereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Prénom(s) du père',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: nomPereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Nom du père',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: prenomMereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Prénom(s) de la mère',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: nomMereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Nom de la mère',
+                ),
+                _fieldGap,
+                _buildTypePieceDw(),
+                _fieldGap,
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'numero de la piece d\'identite obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: identityCardNumberController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Numéro de la pièce d\'identité',
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //----  STEP 3 -------//
+        FormStep(
+          title: 'Profession et adhésion',
+          content: Form(
+            key: formKey[2],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CountryTextFieldWidget(
+                  ontap: () => {
+                    showCountryPicker(
+                        context: context,
+                        onSelect: (Country country) {
+                          setState(() {
+                            nationalityPereController.text = country.name;
+                          });
+                        })
+                  },
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'La nationalité obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: nationalityPereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Nationalité',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Profession obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: professionController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (value) {},
+                  hintText: 'Profession',
+                ),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: posteController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Poste occupé',
+                ),
+                _fieldGap,
+                _buildDipDw(),
+                _fieldGap,
+                TextFieldWidget(
+                  controller: personToContactController,
+                  obscure: false,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {},
+                  hintText: 'Numéro de la personne à contacter',
+                ),
+                _fieldGap,
+                _dateField(
+                  controller: dateAdhesionController,
+                  hint: "Date d'adhésion (jj-mm-aaaa)",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Selectionnez une date';
+                    }
+                    return null;
+                  },
+                  onPicked: (pickedDate) {
+                    setState(() {
+                      dateAdhesionController.text =
+                          DateFormat('dd-MM-yyyy').format(pickedDate);
+                      dateAdhesion =
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //----  STEP 4 -------//
+        FormStep(
+          title: "Pièce d'identité",
+          content: Form(
+            key: formKey[3],
+            child: PhotoStepContent(
+              buttonLabel: "Photographier la pièce d'identité",
+              onPick: () => pickImageIdentityFromCamera(),
+              preview: imageFileIdentity != null
+                  ? Image.file(imageFileIdentity!, fit: BoxFit.cover)
+                  : null,
+            ),
+          ),
+        ),
+
+        //----  STEP 5 -------//
+        FormStep(
+          title: "Photo de l'adhérent",
+          content: Form(
+            key: formKey[4],
+            child: PhotoStepContent(
+              buttonLabel: 'Photographier la personne',
+              onPick: () => pickImageProfileFromCamera(),
+              preview: imageFileProfile != null
+                  ? Image.file(imageFileProfile!, fit: BoxFit.cover)
+                  : null,
+            ),
+          ),
+        ),
+      ];
+
+  Widget _buildTypePieceDw() {
+    return Obx(() => AppDropdown<TypePiece>(
+          items: dropdownController.typeList.toList(),
+          value: dropdownController.selectedTypeRegister.value,
+          hint: 'Type de pièce',
+          labelOf: (v) => v.name ?? '',
+          loading: dropdownController.referenceLoading.value,
+          onRetry: () => dropdownController.loadReferenceData(force: true),
+          onChanged: dropdownController.onSelectType,
         ));
   }
 
-  _buildSexDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) => DropdownButtonFormField<String>(
-              value: dropdownController.selectedSexRegister.value,
-              disabledHint: const Text(
-                'Genre non disponible',
-                style: TextStyle(color: Colors.white),
-              ),
-              hint: const Text('Selectionnez le genre',
-                  style: TextStyle(color: Colors.white)),
-              decoration: dropdownDecoration(),
-              dropdownColor: primaryColor,
-              items: api.sexList.map((v) {
-                return DropdownMenuItem<String>(
-                    value: v,
-                    key: UniqueKey(),
-                    child: Text(
-                      v ?? '',
-                      style: const TextStyle(color: Colors.white),
-                    ));
-              }).toList(),
-              onChanged: (value) {
-                dropdownController.onSelectSex(value!);
-              }),
+  Widget _buildSexDw() {
+    return Obx(() => AppDropdown<String>(
+          items: dropdownController.sexList.map((e) => e.toString()).toList(),
+          value: dropdownController.selectedSexRegister.value,
+          hint: 'Sexe',
+          labelOf: (v) => v,
+          loading: dropdownController.referenceLoading.value,
+          onRetry: () => dropdownController.loadReferenceData(force: true),
+          onChanged: dropdownController.onSelectSex,
         ));
   }
 
-  _buildDipDw() {
-    return Padding(
-        padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
-        child: GetBuilder<DropdownController>(
-          builder: (dropdownController) => DropdownButtonFormField<Diplome>(
-              value: dropdownController.selectedDiplomeRegister.value,
-              disabledHint: const Text(
-                'Dipome non disponible',
-                style: TextStyle(color: Colors.white),
-              ),
-              hint: const Text('Selectionnez le dipome',
-                  style: TextStyle(color: Colors.white)),
-              decoration: dropdownDecoration(),
-              isExpanded: true,
-              dropdownColor: primaryColor,
-              items: dropdownController.diplomeList.isEmpty
-                  ? []
-                  : dropdownController.diplomeList.map((v) {
-                      return DropdownMenuItem<Diplome>(
-                          value: v,
-                          key: UniqueKey(),
-                          child: Text(
-                            v.degreeTitle ?? '',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: Get.height * 0.019),
-                          ));
-                    }).toList(),
-              onChanged: (value) {
-                dropdownController.onSelectDipolem(value!);
-              }),
+  Widget _buildDipDw() {
+    return Obx(() => AppDropdown<Diplome>(
+          items: dropdownController.diplomeList.toList(),
+          value: dropdownController.selectedDiplomeRegister.value,
+          hint: 'Diplôme',
+          labelOf: (v) => v.degreeTitle ?? '',
+          loading: dropdownController.referenceLoading.value,
+          onRetry: () => dropdownController.loadReferenceData(force: true),
+          onChanged: dropdownController.onSelectDipolem,
         ));
   }
 }

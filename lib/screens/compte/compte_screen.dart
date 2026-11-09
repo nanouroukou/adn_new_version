@@ -1,12 +1,12 @@
+import 'package:cherifla/controller/user.controller.dart';
 import 'package:cherifla/screens/compte/modifier_mdp_screen.dart';
+import 'package:cherifla/utils/color/color.dart';
+import 'package:cherifla/utils/responsive/responsive.dart';
 import 'package:cherifla/widgets/appbar/app_bar.dart';
 import 'package:cherifla/widgets/background/background.dart';
+import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-
-import '../../utils/color/color.dart';
-import '../../utils/mediaQuery/size.dart';
 
 class CompteScreen extends StatefulWidget {
   const CompteScreen({super.key});
@@ -16,60 +16,62 @@ class CompteScreen extends StatefulWidget {
 }
 
 class _CompteScreenState extends State<CompteScreen> {
+  final userController = Get.find<UserController>();
+
   @override
   Widget build(BuildContext context) {
+    final name =
+        "${userController.user.value.prenom ?? userController.prenom.value} ${userController.user.value.nom ?? userController.nom.value}";
+
     return Scaffold(
-        appBar: buildAppBar(title: 'Compte'),
-        body: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            const Background(),
-            getBody(),
-          ],
-        ));
-  }
-
-  Widget getBody() {
-    return Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: displayWidth(context) * 0.01,
-            vertical: displayWidth(context) * 0.01),
-        child: ListView(
-          physics: const ClampingScrollPhysics(),
-          children: <Widget>[
-            Gap(displayHeight(context) * 0.03),
-            SizedBox(height: displayHeight(context) * 0.06),
-            SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: [
-                    buildButtonParam("Modifier le mot de passe",
-                        () => Get.to(ModifierMdpScreen())),
-                  ],
+      appBar: buildAppBar(title: 'Compte'),
+      body: Stack(
+        children: [
+          const Background(),
+          ResponsiveScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppCard(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Connecté',
+                                style: TextStyle(
+                                    color: mutedTextColor, fontSize: 13)),
+                            const SizedBox(height: 2),
+                            Text(name.trim(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleMedium),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
-        ));
-  }
-
-  Container buildButtonParam(String title, void Function() onPressed) {
-    return Container(
-      width: displayWidth(context),
-      margin: EdgeInsets.symmetric(
-          vertical: displayHeight(context) * 0.01,
-          horizontal: displayWidth(context) * 0.06),
-      child: ElevatedButton(
-          style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Colors.white),
-              elevation: WidgetStatePropertyAll(4),
-              shadowColor: WidgetStatePropertyAll(Colors.grey)),
-          onPressed: onPressed,
-          child: Text(
-            title,
-            style: TextStyle(
-                color: primaryColor, fontSize: displayWidth(context) * 0.045),
-          )),
+                const SizedBox(height: 24),
+                const Padding(
+                  padding: EdgeInsets.only(left: 4, bottom: 8),
+                  child: Text('Sécurité',
+                      style: TextStyle(
+                          color: mutedTextColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13)),
+                ),
+                MenuTile(
+                  title: 'Modifier le mot de passe',
+                  icon: Icons.lock_outline_rounded,
+                  onTap: () => Get.to(() => const ModifierMdpScreen()),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

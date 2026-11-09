@@ -24,7 +24,7 @@ class TestMaskFormatter extends TextInputFormatter {
             mask[newValue.text.length - 1] == separator) {
           return TextEditingValue(
             text:
-            '${oldValue.text}$separator${newValue.text.substring(newValue.text.length - 1)}',
+                '${oldValue.text}$separator${newValue.text.substring(newValue.text.length - 1)}',
             selection: TextSelection.collapsed(
               offset: newValue.selection.end + 1,
             ),

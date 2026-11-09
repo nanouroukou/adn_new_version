@@ -1,7 +1,5 @@
 import 'package:cherifla/utils/color/color.dart';
-import 'package:cherifla/utils/mediaQuery/size.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CustomHeaderText extends StatelessWidget {
   final String? text;
@@ -21,28 +19,29 @@ class CustomHeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width ?? displayWidth(context),
-      height: height ?? Get.height * 0.08,
+      width: width ?? double.infinity,
+      constraints: BoxConstraints(minHeight: height ?? 56),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: backGroundColor,
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: Get.height * 0.05),
-            Text(
-              text!,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, color: Colors.white, size: 26),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Text(
+              text ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  backgroundColor: Colors.transparent,
-                  decoration: TextDecoration.none,
-                  fontFamily: 'Segoe UI',
-                  fontSize: Get.height * 0.04,
+                  fontSize: 20,
                   fontWeight: weight ?? FontWeight.bold,
                   color: Colors.white),
-              textAlign: TextAlign.center,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

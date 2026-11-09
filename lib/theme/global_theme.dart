@@ -4,91 +4,134 @@ import 'package:flutter/services.dart';
 import '../utils/color/color.dart';
 
 class GlobalTheme {
+  static const double radius = 12;
+
+  static final ColorScheme _colorScheme = ColorScheme.fromSeed(
+    seedColor: primaryColor,
+    primary: primaryColor,
+    secondary: primaryColor,
+    error: redColor,
+    surface: Colors.white,
+  );
+
+  static OutlineInputBorder _border(Color color, [double width = 1]) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: BorderSide(color: color, width: width),
+      );
+
   static ThemeData lightTheme = ThemeData(
-    scaffoldBackgroundColor: const Color.fromARGB(255, 250, 252, 255),
-    primaryColor: primaryColor, // Couleur principale
-    primaryColorLight: primaryColorLight, // Couleur primaire claire
-    primaryColorDark: primaryColor, // Couleur primaire foncée
-    colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: Colors.green, // Palette de couleurs de base
-    ).copyWith(
-      secondary: Colors.green, // Couleur secondaire (accentuée)
-    ),
-    // dialogTheme: const DialogTheme(
-    //   titleTextStyle: TextStyle(fontSize: 18, color: Colors.white),
-    //   surfaceTintColor: primaryColor,
-    // ),
-
+    useMaterial3: true,
+    colorScheme: _colorScheme,
+    scaffoldBackgroundColor: surfaceColor,
+    primaryColor: primaryColor,
+    primaryColorLight: primaryColorLight,
+    primaryColorDark: primaryColorDark,
+    visualDensity: VisualDensity.standard,
     textTheme: const TextTheme(
-      displayLarge: TextStyle(
-          fontSize: 72.0, fontWeight: FontWeight.bold, color: Colors.blue),
+      headlineSmall: TextStyle(
+          fontSize: 22, fontWeight: FontWeight.w700, color: titleTextColor),
       titleLarge: TextStyle(
-          fontSize: 36.0, fontStyle: FontStyle.italic, color: Colors.blue),
-      bodyMedium:
-          TextStyle(fontSize: 14.0, fontFamily: 'Hind', color: Colors.black),
+          fontSize: 20, fontWeight: FontWeight.w700, color: titleTextColor),
+      titleMedium: TextStyle(
+          fontSize: 16, fontWeight: FontWeight.w600, color: titleTextColor),
+      bodyLarge: TextStyle(fontSize: 16, color: titleTextColor),
+      bodyMedium: TextStyle(fontSize: 14, color: titleTextColor),
+      bodySmall: TextStyle(fontSize: 12, color: mutedTextColor),
+      labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     ),
-
+    appBarTheme: const AppBarTheme(
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+          color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+      iconTheme: IconThemeData(color: Colors.white),
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
-        backgroundColor: primaryColor, // Couleur du texte
+        disabledBackgroundColor: primaryColor.withValues(alpha: 0.4),
+        disabledForegroundColor: Colors.white70,
+        elevation: 0,
+        minimumSize: const Size(64, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
+        ),
       ),
     ),
-    // Personnalisation de l'AppBar
-    appBarTheme: AppBarTheme(
-        color: Colors.blue[300], // Couleur de fond
-        titleTextStyle: const TextStyle(
-            color: Colors.white, fontSize: 20.0), // Style du texte du titre
-        iconTheme: const IconThemeData(color: Colors.white),
-        systemOverlayStyle: SystemUiOverlayStyle.light // Couleur des icônes
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: primaryColor,
+        minimumSize: const Size(64, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        side: const BorderSide(color: primaryColor, width: 1.5),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radius),
         ),
-
-    iconTheme: IconThemeData(
-      color: Colors.blue[200], // Couleur des icônes
+      ),
     ),
-
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: primaryColor,
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+    ),
+    iconTheme: const IconThemeData(color: primaryColor),
     inputDecorationTheme: InputDecorationTheme(
-        focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            borderSide: BorderSide(color: primaryColor)),
-        errorStyle: const TextStyle(color: redColor),
-        hintStyle: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.normal,
-          color: textColor,
-        ),
-        filled: true,
-        fillColor: Colors.black12,
-        enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(width: 2, color: primaryColor),
-            borderRadius: BorderRadius.circular(5)),
-        border: OutlineInputBorder(
-            borderSide: const BorderSide(width: 0, color: primaryColor),
-            borderRadius: BorderRadius.circular(15))),
-
-    // Personnalisation des boutons flottants (FAB)
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: primaryColor, // Couleur de fond
-      foregroundColor: Colors.white, // Couleur de l'icône
+      filled: true,
+      fillColor: Colors.white,
+      isDense: false,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: const TextStyle(fontSize: 15, color: mutedTextColor),
+      labelStyle: const TextStyle(fontSize: 15, color: mutedTextColor),
+      floatingLabelStyle: const TextStyle(color: primaryColor),
+      prefixIconColor: primaryColor,
+      suffixIconColor: primaryColor,
+      errorStyle: const TextStyle(color: redColor, fontSize: 12),
+      errorMaxLines: 2,
+      border: _border(borderColor),
+      enabledBorder: _border(borderColor),
+      focusedBorder: _border(primaryColor, 2),
+      errorBorder: _border(redColor),
+      focusedErrorBorder: _border(redColor, 2),
+      disabledBorder: _border(borderColor.withValues(alpha: 0.5)),
     ),
-    // Personnalisation des cartes
-    // cardTheme: const CardTheme(
-    //   color: Colors.white,
-    //   shadowColor: primaryColorLight,
-    //   elevation: 5,
-    // ),
+    cardTheme: CardThemeData(
+      color: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+    ),
     bottomNavigationBarTheme:
         const BottomNavigationBarThemeData(backgroundColor: Colors.white),
-
     snackBarTheme: const SnackBarThemeData(
-        backgroundColor: primaryColor,
-        insetPadding: EdgeInsets.symmetric(vertical: 22, horizontal: 8)),
+      backgroundColor: primaryColor,
+      behavior: SnackBarBehavior.floating,
+    ),
     dropdownMenuTheme: const DropdownMenuThemeData(
-        menuStyle:
-            MenuStyle(backgroundColor: WidgetStatePropertyAll(primaryColor))),
+      menuStyle:
+          MenuStyle(backgroundColor: WidgetStatePropertyAll(Colors.white)),
+    ),
   );
 }

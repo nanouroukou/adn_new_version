@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'sub_section_model.dart';
 
-class Level extends Equatable{
+class Level extends Equatable {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -13,7 +13,6 @@ class Level extends Equatable{
     this.createdAt,
     this.updatedAt,
     this.name,
-
   });
 
   factory Level.fromJson(Map<String, dynamic> json) {
@@ -25,7 +24,6 @@ class Level extends Equatable{
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       name: json['name'],
-
     );
   }
 
@@ -38,8 +36,7 @@ class Level extends Equatable{
     };
   }
 
-  
   @override
   // TODO: implement props
-  List<Object?> get props => [id,name];
+  List<Object?> get props => [id, name];
 }

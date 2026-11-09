@@ -1,4 +1,3 @@
-
 import 'package:encrypt/encrypt.dart';
 
 class MyEncryption {
@@ -13,7 +12,7 @@ class MyEncryption {
     return encrypter.encrypt(plainText, iv: iv).base16;
   }
 
-  static decryptAes(String encryptedDataBase16){
-    return encrypter.decrypt16(encryptedDataBase16,iv: iv);
+  static decryptAes(String encryptedDataBase16) {
+    return encrypter.decrypt16(encryptedDataBase16, iv: iv);
   }
 }

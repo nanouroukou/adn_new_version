@@ -1,3 +1,3 @@
- import 'package:logger/logger.dart';
+import 'package:logger/logger.dart';
 
-Logger logger ()=> Logger(printer: PrettyPrinter());
+Logger logger() => Logger(printer: PrettyPrinter());

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'sub_section_model.dart';
 
-class Section extends Equatable{
+class Section extends Equatable {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -19,7 +19,9 @@ class Section extends Equatable{
 
   factory Section.fromJson(Map<String, dynamic> json) {
     var subSectionsFromJson = json['subSections'] as List?;
-    List<SubSection>? subSectionsList = subSectionsFromJson?.map((subSectionJson) => SubSection.fromJson(subSectionJson)).toList();
+    List<SubSection>? subSectionsList = subSectionsFromJson
+        ?.map((subSectionJson) => SubSection.fromJson(subSectionJson))
+        .toList();
 
     return Section(
       id: json['id'],
@@ -36,12 +38,12 @@ class Section extends Equatable{
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'nom': nom,
-      'subSections': subSections?.map((subSection) => subSection.toJson()).toList(),
+      'subSections':
+          subSections?.map((subSection) => subSection.toJson()).toList(),
     };
   }
 
-  
   @override
   // TODO: implement props
-  List<Object?> get props => [id,nom];
+  List<Object?> get props => [id, nom];
 }

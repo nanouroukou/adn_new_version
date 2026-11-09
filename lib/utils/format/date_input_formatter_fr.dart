@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 class DateInputFormatterFr extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,  
-
+    TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
     // On ne permet que les chiffres et les tirets
@@ -21,8 +20,7 @@ class DateInputFormatterFr extends TextInputFormatter {
     for (int i = 0; i < newText.length; i++) {
       buffer.write(newText[i]);
       var nonZeroIndex = i + 1;
-      if (nonZeroIndex % 2 == 0 && nonZeroIndex
- != 10) {
+      if (nonZeroIndex % 2 == 0 && nonZeroIndex != 10) {
         buffer.write('-');
       }
     }

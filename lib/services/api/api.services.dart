@@ -286,7 +286,7 @@ class ApiServices extends GetxController {
           } else {
             logger().d('Adherent OK MAIS PAS DE CORRESPONDANCE');
             if (showAlert) {
-              Alert.showErrorDialog('Aucun adherant trouvé');
+              Alert.showErrorDialog('Aucun adhérent trouvé');
             }
             return null;
           }

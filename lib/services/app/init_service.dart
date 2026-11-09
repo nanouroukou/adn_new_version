@@ -1,5 +1,4 @@
 import 'package:cherifla/controller/dropdown_controller.dart';
-import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/log/logger.dart';
 import 'package:get/get.dart';
 
@@ -16,10 +15,10 @@ class InitService {
 
   InitService._internal();
 
+  /// Précharge les listes des formulaires (sexes, types de pièce, diplômes).
+  /// Sans délai : appelé dès qu'un agent est connecté.
   Future preloadEssentialData() async {
-    Future.delayed(const Duration(seconds: 4), () {
-      _dropdownController.init();
-      logger().d('Prechargement liste federation');
-    });
+    logger().d('Préchargement des listes');
+    return _dropdownController.loadReferenceData();
   }
 }
