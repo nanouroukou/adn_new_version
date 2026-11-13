@@ -1,6 +1,7 @@
 import 'package:cherifla/screens/changeComite/change_comite_target.dart';
 import 'package:cherifla/screens/changeComite/scan_qr_code_screen.dart';
 import 'package:cherifla/services/api/api.services.dart';
+import 'package:cherifla/utils/format/phone_format.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
 import 'package:cherifla/utils/responsive/responsive.dart';
 import 'package:cherifla/widgets/appbar/app_bar.dart';
@@ -9,6 +10,7 @@ import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:cherifla/widgets/textField/textFieldWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/countries.dart';
 
 import '../../constants/app_texts.dart';
 import '../../widgets/background/background.dart';
@@ -31,7 +33,7 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
       setState(() {
         showLoading = true;
       });
-      api.getAdherentByCode(codeController.value.text).then((value) {
+      api.getAdherentByCode(_searchValue(codeController.text)).then((value) {
         if (value != null) {
           setState(() {
             showLoading = false;
@@ -44,6 +46,17 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
         }),
       );
     }
+  }
+
+  /// Code d'adhérent tel quel ; un téléphone est ramené au numéro national
+  /// en chiffres seuls (format enregistré en base), quel que soit le format
+  /// saisi : `76 12 34 56`, `+223 76 12 34 56`, `0022376123456`…
+  String _searchValue(String input) {
+    final value = input.trim();
+    final compact = value.replaceAll(' ', '');
+    if (compact.length == 6 && !compact.startsWith('+')) return compact;
+    final parts = PhoneFormat.split(compact, countries.map((c) => c.dialCode));
+    return parts.number;
   }
 
   @override
@@ -82,7 +95,7 @@ class _ChangeComiteScreenState extends State<ChangeComiteScreen> {
                     icon: const Icon(Icons.qr_code_scanner),
                   ),
                   validator: (value) {
-                    if (value!.isEmpty || value.contains(" ")) {
+                    if (value == null || value.trim().isEmpty) {
                       return "Code d'adhérent incorrect";
                     }
                     return null;

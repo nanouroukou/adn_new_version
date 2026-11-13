@@ -13,6 +13,7 @@ import 'package:cherifla/utils/alert/alert.util.dart';
 import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/format/date.dart';
 import 'package:cherifla/utils/format/textFormater.dart';
+import 'package:cherifla/utils/format/phone_format.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
 import 'package:cherifla/utils/log/logger.dart';
 
@@ -58,6 +59,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
   bool isCompleted = false;
 
   final List<GlobalKey<FormState>> formKey = [
+    GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
@@ -132,7 +134,7 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       nom: dropdownController.nomController.value.text,
       prenom: dropdownController.prenomController.value.text,
       nomPere: dropdownController.nomPereController.value.text,
-      phone: dropdownController.phoneNumberController.value.text,
+      phone: PhoneFormat.digits(dropdownController.phoneNumberController.text),
       dateNaissance: dropdownController.dateNaissanceController.value.text,
       adhesionDate: dropdownController.dateAdhesionController.value.text,
       prenomPere: dropdownController.prenomPereController.value.text,
@@ -141,11 +143,11 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
       sexe: dropdownController.selectedSexUpdate.value,
       indicePays: dropdownController.indicePaysController.value.text,
       nationality: dropdownController.nationalityController.value.text,
-      placeOfBirthday:
-          dropdownController.placeOfBirthdayController.value.text,
+      placeOfBirthday: dropdownController.placeOfBirthdayController.value.text,
       profession: dropdownController.professionController.value.text,
       position: dropdownController.posteController.value.text,
-      personToContact: dropdownController.personToContactController.text,
+      personToContact: PhoneFormat.e164(dropdownController.contactDialCode,
+          dropdownController.personToContactController.text),
       identityType: dropdownController.selectedTypeUpdate.value,
       degree: dropdownController.selectedDiplomeUpdate.value,
       identityCardNumber:
@@ -437,6 +439,30 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   onChanged: (value) {},
                   hintText: 'Lieu de naissance',
                 ),
+                _fieldGap,
+                CountryTextFieldWidget(
+                  ontap: () => {
+                    showCountryPicker(
+                        context: context,
+                        onSelect: (Country country) {
+                          setState(() {
+                            dropdownController.nationalityController.text =
+                                country.name;
+                          });
+                        })
+                  },
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'La nationalité obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: dropdownController.nationalityController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Nationalité',
+                ),
               ],
             ),
           ),
@@ -444,30 +470,12 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
 
         //----  STEP 2 -------//
         FormStep(
-          title: 'Contact et famille',
+          title: 'Filiation',
           content: Form(
             key: formKey[1],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                NumberTextFieldWidget(
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return 'Numero de telephone obligatoire';
-                    }
-                    return null;
-                  },
-                  controller: dropdownController.phoneNumberController,
-                  obscure: false,
-                  countryCode: dropdownController.codeCountry.value,
-                  keyboardType: TextInputType.phone,
-                  hintText: 'Numéro de téléphone',
-                  onChanged: (String value) {},
-                  onChangeCountry: (value) {
-                    dropdownController.indicePaysController.text = value;
-                  },
-                ),
-                const SizedBox(height: 4),
                 TextFieldWidget(
                   controller: dropdownController.prenomPereController,
                   obscure: false,
@@ -502,22 +510,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                   onChanged: (value) {},
                   hintText: 'Nom de la mère',
                 ),
-                _fieldGap,
-                _buildTypePieceDw(),
-                _fieldGap,
-                TextFieldWidget(
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return 'Numéro de la pièce obligatoire';
-                    }
-                    return null;
-                  },
-                  controller: dropdownController.identityCardNumberController,
-                  obscure: false,
-                  keyboardType: TextInputType.name,
-                  onChanged: (value) {},
-                  hintText: 'Numéro de la pièce d\'identité',
-                ),
               ],
             ),
           ),
@@ -525,36 +517,55 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
 
         //----  STEP 3 -------//
         FormStep(
-          title: 'Profession et adhésion',
+          title: 'Coordonnées',
           content: Form(
             key: formKey[2],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CountryTextFieldWidget(
-                  ontap: () => {
-                    showCountryPicker(
-                        context: context,
-                        onSelect: (Country country) {
-                          setState(() {
-                            dropdownController.nationalityController.text =
-                                country.name;
-                          });
-                        })
-                  },
+                NumberTextFieldWidget(
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'La nationalité obligatoire';
+                      return 'Numero de telephone obligatoire';
                     }
                     return null;
                   },
-                  controller: dropdownController.nationalityController,
+                  controller: dropdownController.phoneNumberController,
                   obscure: false,
-                  keyboardType: TextInputType.name,
-                  onChanged: (value) {},
-                  hintText: 'Nationalité',
+                  countryCode: dropdownController.codeCountry.value,
+                  keyboardType: TextInputType.phone,
+                  hintText: 'Numéro de téléphone',
+                  onChanged: (String value) {},
+                  onChangeCountry: (value) {
+                    dropdownController.indicePaysController.text = value;
+                    dropdownController.codeCountry.value = value;
+                  },
                 ),
                 _fieldGap,
+                NumberTextFieldWidget(
+                  controller: dropdownController.personToContactController,
+                  obscure: false,
+                  countryCode: dropdownController.contactDialCode,
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {},
+                  onChangeCountry: (value) {
+                    dropdownController.contactDialCode = value;
+                  },
+                  hintText: 'Numéro de la personne à contacter',
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //----  STEP 4 -------//
+        FormStep(
+          title: 'Profession et adhésion',
+          content: Form(
+            key: formKey[3],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 TextFieldWidget(
                   validator: (String? value) {
                     if (value!.isEmpty) {
@@ -580,14 +591,6 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
                 _fieldGap,
                 _buildDipDw(),
                 _fieldGap,
-                TextFieldWidget(
-                  controller: dropdownController.personToContactController,
-                  obscure: false,
-                  keyboardType: TextInputType.name,
-                  onChanged: (value) {},
-                  hintText: 'Numéro de la personne à contacter',
-                ),
-                _fieldGap,
                 _dateField(
                   controller: dropdownController.dateAdhesionController,
                   hint: "Date d'adhésion",
@@ -609,27 +612,48 @@ class _ChangeComiteFormScreenState extends State<ChangeComiteFormScreen> {
           ),
         ),
 
-        //----  STEP 4 -------//
+        //----  STEP 5 -------//
         FormStep(
           title: "Pièce d'identité",
           content: Form(
-            key: formKey[3],
-            child: PhotoStepContent(
-              buttonLabel: "Photographier la pièce d'identité",
-              onPick: () => pickImageIdentityFromCamera(),
-              preview: imageFileIdentity == null
-                  ? _networkPreview(
-                      '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage.value}')
-                  : Image.file(imageFileIdentity!, fit: BoxFit.cover),
+            key: formKey[4],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTypePieceDw(),
+                _fieldGap,
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'Numéro de la pièce obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: dropdownController.identityCardNumberController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Numéro de la pièce d\'identité',
+                ),
+                _fieldGap,
+                PhotoStepContent(
+                  buttonLabel: "Photographier la pièce d'identité",
+                  onPick: () => pickImageIdentityFromCamera(),
+                  preview: imageFileIdentity == null
+                      ? _networkPreview(
+                          '${ApiServices.BASE_URL}/api/adherent/doc-image/${dropdownController.identityDocImage.value}')
+                      : Image.file(imageFileIdentity!, fit: BoxFit.cover),
+                ),
+              ],
             ),
           ),
         ),
 
-        //----  STEP 5 -------//
+        //----  STEP 6 -------//
         FormStep(
           title: "Photo de l'adhérent",
           content: Form(
-            key: formKey[4],
+            key: formKey[5],
             child: PhotoStepContent(
               buttonLabel: 'Photographier la personne',
               onPick: () => pickImageProfileFromCamera(),

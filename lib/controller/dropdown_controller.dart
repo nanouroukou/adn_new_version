@@ -7,7 +7,9 @@ import 'package:cherifla/models/section_model.dart';
 import 'package:cherifla/models/sub_section_model.dart';
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/log/logger.dart';
+import 'package:cherifla/utils/format/phone_format.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class DropdownController extends GetxController {
@@ -45,6 +47,9 @@ class DropdownController extends GetxController {
   final posteController = TextEditingController();
 
   final personToContactController = TextEditingController();
+
+  /// Indicatif du numéro de la personne à contacter (ex. `223`).
+  String contactDialCode = '';
 
   // var subSectionList = <SubSection>[].obs;
   // var comityList = <Comity>[].obs;
@@ -130,7 +135,7 @@ class DropdownController extends GetxController {
     codeAdherent.value = adh.codeAdherent ?? "";
     codeAdherent.value = adh.codeAdherent ?? "";
     identityDocImage.value = adh.identityDocImage.toString();
-    phoneNumberController.text = adh.phone!.replaceAll(" ", "");
+    phoneNumberController.text = PhoneFormat.digits(adh.phone);
     nomController.text = adh.nom ?? "";
     prenomController.text = adh.prenom ?? "";
     identityCardNumberController.text = adh.identityCardNumber ?? "";
@@ -150,7 +155,11 @@ class DropdownController extends GetxController {
     posteController.text = adh.position ?? "";
     placeOfBirthdayController.text = adh.placeOfBirthday ?? "";
     nationalityController.text = adh.nationality ?? "";
-    personToContactController.text = adh.personToContact ?? "";
+    // Stocké au format international (+22376123456) : on sépare l'indicatif.
+    final contact = PhoneFormat.split(
+        adh.personToContact, countries.map((c) => c.dialCode));
+    contactDialCode = contact.dialCode;
+    personToContactController.text = contact.number;
 
     update();
   }

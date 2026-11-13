@@ -1,3 +1,5 @@
+import 'package:cherifla/models/adherent_model.dart';
+import 'package:cherifla/screens/adherent/adherent_detail_screen.dart';
 import 'package:cherifla/services/api/api.services.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
 import 'package:cherifla/utils/log/logger.dart';
@@ -5,6 +7,7 @@ import 'package:cherifla/utils/responsive/responsive.dart';
 import 'package:cherifla/widgets/appbar/app_bar.dart';
 import 'package:cherifla/widgets/common/common_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../utils/color/color.dart';
@@ -16,12 +19,16 @@ class _Entry {
     required this.code,
     required this.place,
     required this.date,
+    required this.raw,
   });
 
   final String name;
   final String code;
   final String place;
   final DateTime? date;
+
+  /// Données brutes de l'adhérent renvoyées par l'API.
+  final Map<String, dynamic> raw;
 
   String get initials {
     final parts = name.split(' ').where((p) => p.isNotEmpty).toList();
@@ -96,7 +103,25 @@ class _HistoriqueScreenState extends State<HistoriqueScreen> {
       code: (item['codeAdherent'] ?? '-').toString(),
       place: _titleCase((item['level6']?['name'] ?? '').toString()),
       date: raw == null ? null : DateTime.tryParse(raw.toString()),
+      raw: Map<String, dynamic>.from(item as Map),
     );
+  }
+
+  void _openDetail(_Entry entry) {
+    Adherent adherent;
+    try {
+      adherent = Adherent.fromJson(entry.raw);
+    } catch (e) {
+      logger().e('Lecture adhérent historique impossible : $e');
+      adherent = Adherent(
+        nom: entry.raw['nom']?.toString(),
+        prenom: entry.raw['prenom']?.toString(),
+        codeAdherent: entry.code,
+        identityType: null,
+        sexe: null,
+      );
+    }
+    Get.to(() => AdherentDetailScreen(adherent: adherent));
   }
 
   /// Regroupe les inscriptions par mois (« Janvier 2026 »).
@@ -237,7 +262,10 @@ class _HistoriqueScreenState extends State<HistoriqueScreen> {
           child: Column(
             children: [
               for (var i = 0; i < entries.length; i++) ...[
-                _EntryRow(entry: entries[i]),
+                _EntryRow(
+                  entry: entries[i],
+                  onTap: () => _openDetail(entries[i]),
+                ),
                 if (i < entries.length - 1)
                   const Divider(height: 1, indent: 16, color: borderColor),
               ],
@@ -250,8 +278,9 @@ class _HistoriqueScreenState extends State<HistoriqueScreen> {
 }
 
 class _EntryRow extends StatelessWidget {
-  const _EntryRow({required this.entry});
+  const _EntryRow({required this.entry, this.onTap});
   final _Entry entry;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -261,39 +290,44 @@ class _EntryRow extends StatelessWidget {
 
     const muted = TextStyle(fontSize: 13, color: mutedTextColor);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.name.isEmpty ? 'Sans nom' : entry.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: titleTextColor),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(entry.code, style: muted),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  entry.name.isEmpty ? 'Sans nom' : entry.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: titleTextColor),
-                ),
+                Text(date, style: muted),
                 const SizedBox(height: 3),
-                Text(entry.code, style: muted),
+                Text(entry.place, style: muted),
               ],
             ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(date, style: muted),
-              const SizedBox(height: 3),
-              Text(entry.place, style: muted),
-            ],
-          ),
-        ],
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right_rounded, color: mutedTextColor),
+          ],
+        ),
       ),
     );
   }

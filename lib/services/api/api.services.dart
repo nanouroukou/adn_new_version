@@ -25,6 +25,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
+import 'package:cherifla/utils/format/phone_format.dart';
 
 import '../../screens/inscription/valid.dart';
 
@@ -718,7 +719,9 @@ class ApiServices extends GetxController {
         if (bodyJson['status'] == 1) {
           code.value = bodyJson['body']['codeAdherent'];
           link.value = bodyJson['body']['link'];
-          phone.value = bodyJson['body']['phone'];
+          phone.value = PhoneFormat.whatsapp(
+              bodyJson['body']['phone']?.toString() ?? body?.phone,
+              body?.indicePays);
 
           // Alert.showInfoDialog(resJson['message'],
           Get.offAll(ValidationScreen());
@@ -809,7 +812,9 @@ class ApiServices extends GetxController {
         if (bodyJson['status'] == 1) {
           code.value = bodyJson['body']['codeAdherent'];
           link.value = bodyJson['body']['link'];
-          phone.value = bodyJson['body']['phone'];
+          phone.value = PhoneFormat.whatsapp(
+              bodyJson['body']['phone']?.toString() ?? body?.phone,
+              body?.indicePays);
 
           // Alert.showInfoDialog(resJson['message'],
           Get.offAll(ValidationScreen());

@@ -12,6 +12,7 @@ import 'package:cherifla/utils/color/color.dart';
 import 'package:cherifla/utils/format/date.dart';
 
 import 'package:cherifla/utils/format/textFormater.dart';
+import 'package:cherifla/utils/format/phone_format.dart';
 import 'package:cherifla/utils/loading/loading_utils.dart';
 import 'package:cherifla/widgets/common/responsive_stepper.dart';
 import 'package:cherifla/widgets/textField/country_sellect.dart';
@@ -66,6 +67,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final posteController = TextEditingController();
 
   final personToContactController = TextEditingController();
+  String contactDialCode = '';
   var _showLoading = false;
 
   var imageFileProfile;
@@ -75,6 +77,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   DateFormat formatter = DateFormat("yyyy-mm-dd");
 
   final List<GlobalKey<FormState>> formKey = [
+    GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
@@ -131,7 +134,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       nom: nomController.value.text,
       indicePays: indicePaysController.value.text,
       prenom: prenomController.value.text,
-      phone: phoneNumberController.value.text,
+      phone: PhoneFormat.digits(phoneNumberController.text),
       dateNaissance:
           formatter.format(parseFrDate(dateNaissanceController.value.text)),
       adhesionDate:
@@ -145,7 +148,8 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       placeOfBirthday: placeOfBirthdayController.value.text,
       profession: professionController.value.text,
       position: posteController.value.text,
-      personToContact: personToContactController.text,
+      personToContact:
+          PhoneFormat.e164(contactDialCode, personToContactController.text),
       identityType: {'id': dropdownController.selectedTypeRegister.value?.id},
       degree: {'id': dropdownController.selectedDiplomeRegister.value?.id},
       identityCardNumber: identityCardNumberController.value.text,
@@ -379,6 +383,29 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   onChanged: (value) {},
                   hintText: 'Lieu de naissance',
                 ),
+                _fieldGap,
+                CountryTextFieldWidget(
+                  ontap: () => {
+                    showCountryPicker(
+                        context: context,
+                        onSelect: (Country country) {
+                          setState(() {
+                            nationalityPereController.text = country.name;
+                          });
+                        })
+                  },
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'La nationalité obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: nationalityPereController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Nationalité',
+                ),
               ],
             ),
           ),
@@ -386,29 +413,12 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
         //----  STEP 2 -------//
         FormStep(
-          title: 'Contact et famille',
+          title: 'Filiation',
           content: Form(
             key: formKey[1],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                NumberTextFieldWidget(
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return 'Numero de telephone obligatoire';
-                    }
-                    return null;
-                  },
-                  controller: phoneNumberController,
-                  obscure: false,
-                  keyboardType: TextInputType.phone,
-                  onChanged: (value) {},
-                  onChangeCountry: (value) {
-                    indicePaysController.text = value;
-                  },
-                  hintText: 'Numéro de téléphone',
-                ),
-                const SizedBox(height: 4),
                 TextFieldWidget(
                   controller: prenomPereController,
                   obscure: false,
@@ -443,22 +453,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                   onChanged: (value) {},
                   hintText: 'Nom de la mère',
                 ),
-                _fieldGap,
-                _buildTypePieceDw(),
-                _fieldGap,
-                TextFieldWidget(
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return 'numero de la piece d\'identite obligatoire';
-                    }
-                    return null;
-                  },
-                  controller: identityCardNumberController,
-                  obscure: false,
-                  keyboardType: TextInputType.name,
-                  onChanged: (value) {},
-                  hintText: 'Numéro de la pièce d\'identité',
-                ),
               ],
             ),
           ),
@@ -466,35 +460,54 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
         //----  STEP 3 -------//
         FormStep(
-          title: 'Profession et adhésion',
+          title: 'Coordonnées',
           content: Form(
             key: formKey[2],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CountryTextFieldWidget(
-                  ontap: () => {
-                    showCountryPicker(
-                        context: context,
-                        onSelect: (Country country) {
-                          setState(() {
-                            nationalityPereController.text = country.name;
-                          });
-                        })
-                  },
+                NumberTextFieldWidget(
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'La nationalité obligatoire';
+                      return 'Numero de telephone obligatoire';
                     }
                     return null;
                   },
-                  controller: nationalityPereController,
+                  controller: phoneNumberController,
                   obscure: false,
-                  keyboardType: TextInputType.name,
+                  countryCode: indicePaysController.text,
+                  keyboardType: TextInputType.phone,
                   onChanged: (value) {},
-                  hintText: 'Nationalité',
+                  onChangeCountry: (value) {
+                    indicePaysController.text = value;
+                  },
+                  hintText: 'Numéro de téléphone',
                 ),
                 _fieldGap,
+                NumberTextFieldWidget(
+                  controller: personToContactController,
+                  obscure: false,
+                  countryCode: contactDialCode,
+                  keyboardType: TextInputType.phone,
+                  onChanged: (value) {},
+                  onChangeCountry: (value) {
+                    contactDialCode = value;
+                  },
+                  hintText: 'Numéro de la personne à contacter',
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        //----  STEP 4 -------//
+        FormStep(
+          title: 'Profession et adhésion',
+          content: Form(
+            key: formKey[3],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 TextFieldWidget(
                   validator: (String? value) {
                     if (value!.isEmpty) {
@@ -520,14 +533,6 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
                 _fieldGap,
                 _buildDipDw(),
                 _fieldGap,
-                TextFieldWidget(
-                  controller: personToContactController,
-                  obscure: false,
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {},
-                  hintText: 'Numéro de la personne à contacter',
-                ),
-                _fieldGap,
                 _dateField(
                   controller: dateAdhesionController,
                   hint: "Date d'adhésion (jj-mm-aaaa)",
@@ -551,26 +556,47 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
           ),
         ),
 
-        //----  STEP 4 -------//
+        //----  STEP 5 -------//
         FormStep(
           title: "Pièce d'identité",
           content: Form(
-            key: formKey[3],
-            child: PhotoStepContent(
-              buttonLabel: "Photographier la pièce d'identité",
-              onPick: () => pickImageIdentityFromCamera(),
-              preview: imageFileIdentity != null
-                  ? Image.file(imageFileIdentity!, fit: BoxFit.cover)
-                  : null,
+            key: formKey[4],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTypePieceDw(),
+                _fieldGap,
+                TextFieldWidget(
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return 'numero de la piece d\'identite obligatoire';
+                    }
+                    return null;
+                  },
+                  controller: identityCardNumberController,
+                  obscure: false,
+                  keyboardType: TextInputType.name,
+                  onChanged: (value) {},
+                  hintText: 'Numéro de la pièce d\'identité',
+                ),
+                _fieldGap,
+                PhotoStepContent(
+                  buttonLabel: "Photographier la pièce d'identité",
+                  onPick: () => pickImageIdentityFromCamera(),
+                  preview: imageFileIdentity != null
+                      ? Image.file(imageFileIdentity!, fit: BoxFit.cover)
+                      : null,
+                ),
+              ],
             ),
           ),
         ),
 
-        //----  STEP 5 -------//
+        //----  STEP 6 -------//
         FormStep(
           title: "Photo de l'adhérent",
           content: Form(
-            key: formKey[4],
+            key: formKey[5],
             child: PhotoStepContent(
               buttonLabel: 'Photographier la personne',
               onPick: () => pickImageProfileFromCamera(),
